@@ -1,0 +1,70 @@
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.table {
+    vertical-align: middle;
+    border: 3px solid lightblue;
+    border-radius: 3px;
+}
+
+.label{
+    font-size: 22px;
+    vertical-align: middle;
+}
+
+.login_heading{
+    font-size: 24px;
+    text-align: center;
+  
+}
+
+.form-horizontal .control-label{
+/* text-align:right; */
+    vertical-align: middle;
+    text-align:right;
+    display:block;
+    background-color:#ffa;
+}
+
+
+input[type=number],input[type=date],input[type=precentage] select {
+    width: 75%;
+    max-width: 200px;
+    padding: 5px 5px;
+    margin: 4px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+select{
+    width: 75%;
+    max-width: 200px;
+    padding: 5px 5px;
+    margin: 4px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: century gothic;
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+
+}
+
+td{
+    padding: 10px;
+    font-size: 15px;
+}
