@@ -119,7 +119,7 @@ angular
             console.log("update");
 
             //修正簡化版設定
-            if (!$scope.isDetail) {
+            if (!$scope.isDetail()) {
                 $scope.multiple = 1;
                 $scope.current_lp = 0;
                 $scope.current_ap = 0;
@@ -157,10 +157,12 @@ angular
             $scope.urgent_need = 0;
             var needPt = (targetPt - $scope.currentPt) / (multiple * (1 + crit_rate * 0.2));
 
-            console.log("need pt : " + needPt);
+
+            if (!$scope.isDetail()) {
+                $scope.night = $scope.max_night;
+            }
 
             //夜場
-            //
             $scope.urgent_need += remainingTime * $scope.night;
             $scope.large_need += remainingTime * $scope.night * $scope.ratio_urgent;
             var PfWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
@@ -190,7 +192,7 @@ angular
             }
 
             //LP
-            $scope.LP_consum = (targetPt - $scope.currentPt) / $scope.PtperLP;
+            $scope.LP_consum = needPt / $scope.PtperLP;
             if (targetPt == 0 || $scope.LP_consum < 0) $scope.LP_consum = 0;
             console.log("LP_consum: " + $scope.LP_consum);
             if (!$scope.isFullLevel) $scope.LP_consum += $scope.upgrade_consum_lp;
@@ -258,7 +260,7 @@ angular
             }
             if (LP_need_rest < 0) LP_need_rest = 0;
             $scope.lp_buy_directly = LP_need_rest;
-            $scope.tot_diamond_lp = LP_need_rest / lp_price;
+            $scope.tot_diamond_lp = LP_need_rest * lp_price;
             saveDataToCookie();
         }
 
@@ -285,6 +287,14 @@ angular
                     }
                 }
             })
+        }
+
+        $scope.isLargerBetter = function() {
+            if ($scope.larger_Pt / $scope.larger_lp > $scope.large_Pt / $scope.large_lp) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         $scope.calcMaxNight = function() {
@@ -389,7 +399,7 @@ angular
         // console.log("deadlineDate\n" + $scope.deadlineDate.toISOString() + "\n" + $scope.deadlineDate.getTime());
         $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + 10 * 1000 * 60 * 60);
 
-        // $scope.setMine();//just for me testing
+        // $scope.setMine(); //just for me testing
         $scope.update();
 
 

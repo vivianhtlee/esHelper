@@ -30,10 +30,18 @@
 
 <body>
     <h1>偶像夢幻祭演唱會活動耗鑽計算器</h1>
-    <div class="container col-md-12" name="hit">
-
+    <div class="container col-md-12 col-sm-12" name="alerts">
+        <div class="container col-md-2 col-sm-0" name="alerts"> </div>
+        <div class="container col-md-8 col-sm-12" name="alerts">
+            <div class="alert alert-info alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>誤差: </strong> 緊急夜場最大數目以前特大為準。
+            </div>
+        </div>
     </div>
-    <p class="container col-md-12">
+    <div class="container col-md-12 col-sm-12">
         <center>
             <div class="btn-group" role="group" aria-label="設定">
                 <button type="button" class="btn btn-default" ng-click="prepare()" ng-disabled="isPrepare()">預算</button>
@@ -41,9 +49,10 @@
                 <button type="button" class="btn btn-default" ng-click="detail()" ng-disabled="isDetail()">詳細</button>
             </div>
         </center>
-    </p>
+    </div>
+    <hr>
     <div class="col-md-2 col-sm-0"></div>
-    <div class="container col-md-8">
+    <div class="container col-md-8 col-sm-12">
         <form ng-keyup="update()" id="form-horizontal" name="form">
             <div class="form-group col-sm-12">
                 <label class="control-label col-sm-3">目標Pt</label>
@@ -147,8 +156,12 @@
                     <input type="number" ng-model="urgent_lp">lp/場<br> 緊急出率(特大:緊急):
                     <span ng-hide="isDetail()">{{ratio_urgent}}</span>
                     <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px"/></span>
-                    <br> 每天
-                    <input type="number" ng-model="night" min=0 max=6 style="max-width: 50px">場緊急夜場(0~{{max_night|number:0}}之間)
+                    <br>每天
+                    <span ng-hide="isDetail()">{{night}} 場緊急夜場(0~{{max_night|number:0}}之間)</span>
+                    <span ng-show="isDetail()">
+                        <input type="number" ng-model="night" min=0 max=6 style="max-width: 50px">
+                        場緊急夜場(0~{{max_night|number:0}}之間)
+                    </span>
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -175,9 +188,14 @@
                 </div>
             </div>
             <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">收益</label>
+                <label class="col-sm-3 control-label">每LP收益</label>
                 <div class="col-sm-9" ng-show="isConcertLPFilled()">
-                    每LP收益: {{PtperLP|number:1}} pt/lp
+                    <div ng-hide="isLargerBetter()">
+                        收益: {{PtperLP|number:1}} pt/lp
+                    </div>
+                    <div ng-show="isLargerBetter()">
+                        前半場收益: {{PtperLP_large|number:1}} pt/lp<br> 後半場收益: {{PtperLP_larger|number:1}} pt/lp
+                    </div>
                 </div>
                 <div class="col-sm-9" ng-hide="isConcertLPFilled()">{請先填寫演唱會所需LP}</div>
             </div>
