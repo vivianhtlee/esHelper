@@ -54,6 +54,7 @@ angular
         $scope.detail = function() {
             $scope.state = "detail";
             $scope.update();
+            $scope.night = parseInt($scope.night);
         }
 
         $scope.setRewardOfPoint = function() {
@@ -115,18 +116,40 @@ angular
             }
         }
 
+        $scope.isLargerBetter = function() {
+            if ($scope.larger_Pt / $scope.larger_lp > $scope.large_Pt / $scope.large_lp) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+        $scope.isLargeNightBetter = function() {
+            var PtpreLP_large_with_night = ($scope.ratio_urgent * $scope.large_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.large_lp + $scope.urgent_lp * 2);
+            var PtperLP_larger_without_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp);
+            // var PtperLP_larger_with_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp * 2);
+
+            if (PtpreLP_large_with_night > PtperLP_larger_without_night) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         $scope.update = function() {
             console.log("update");
 
             //修正簡化版設定
             if (!$scope.isDetail()) {
-                $scope.multiple = 1;
+                $scope.multiple = 0;
                 $scope.current_lp = 0;
                 $scope.current_ap = 0;
                 $scope.current_exp = 2000;
                 $scope.ratio_urgent = 5;
                 $scope.cleanAP = true;
                 $scope.sleepingHours = 8;
+                $scope.breadAte = $scope.get_bread + $scope.own_bread;
                 $scope.setRewardOfPoint();
                 if ($scope.isPrepare()) {
                     $scope.currentPt = 0;
@@ -155,23 +178,80 @@ angular
             $scope.calcMaxNight();
             $scope.large_need = 0;
             $scope.urgent_need = 0;
+            $scope.larger_need = 0;
             var needPt = (targetPt - $scope.currentPt) / (multiple * (1 + crit_rate * 0.2));
 
 
             if (!$scope.isDetail()) {
                 $scope.night = $scope.max_night;
+                if ($scope.night > 5) $scope.night = 5;
             }
 
             //夜場
-            $scope.urgent_need += remainingTime * $scope.night;
-            $scope.large_need += remainingTime * $scope.night * $scope.ratio_urgent;
-            var PfWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
+            var needPt2 = needPt; //needPt保留不變
+            if (!$scope.isLargerBetter()) { //前特大收益>=後特大
+                $scope.urgent_need += remainingTime * $scope.night;
+                $scope.large_need += remainingTime * $scope.night * $scope.ratio_urgent;
+                var PfWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
 
-            var needPt2 = needPt - PfWithNight;
-            $scope.large_need += needPt2 / (6000 * $scope.ratio_urgent + 15000) * $scope.ratio_urgent;
-            $scope.urgent_need += needPt2 / (6000 * $scope.ratio_urgent + 15000);
+                needPt2 -= PfWithNight;
+                $scope.large_need += needPt2 / (6000 * $scope.ratio_urgent + 15000) * $scope.ratio_urgent;
+                $scope.urgent_need += needPt2 / (6000 * $scope.ratio_urgent + 15000);
+                //全場/前期收益
+                $scope.PtperLP = needPt / ($scope.large_need * $scope.large_lp + ($scope.urgent_need + $scope.night * remainingTime) * $scope.urgent_lp);
+            } else { //前特大收益<後特大
+                if (remainingTime > 4) {
+                    remainingTime_later = 4;
+                    remainingTime_early = remainingTime - 4;
+                } else {
+                    remainingTime_later = remainingTime;
+                    remainingTime_early = 0;
+                }
+                $scope.PtperLP = ($scope.ratio_urgent * $scope.large_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.large_lp + $scope.urgent_lp * 2);
 
-            $scope.PtperLP = needPt / ($scope.large_need * $scope.large_lp + ($scope.urgent_need + $scope.night * remainingTime) * $scope.urgent_lp);
+                var PtperLP_larger_without_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp);
+                var PtperLP_larger_with_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp * 2);
+                console.log("後特大無夜場: " + PtperLP_larger_without_night + "\n後特大有夜場: " + PtperLP_larger_with_night);
+
+                console.log(needPt2);
+                //扣去前半場的前特大
+                if ($scope.isLargeNightBetter()) { //前特大+夜場>後特大無夜場
+                    $scope.urgent_need += remainingTime_early * $scope.night;
+                    $scope.large_need += remainingTime_early * $scope.night * $scope.ratio_urgent;
+                    var PfWithNight = remainingTime_early * $scope.night * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    needPt2 -= PfWithNight;
+                } else {
+                    var night_early = 24 * 2 / ($scope.large_lp * $scope.ratio_urgent + $scope.urgent_lp * 2);
+                    $scope.urgent_need += remainingTime_early * night_early;
+                    $scope.large_need += remainingTime_early * night_early * $scope.ratio_urgent;
+                    var PfWithNight = remainingTime_early * night_early * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    needPt2 -= PfWithNight;
+                    if (needPt2 < 0) needPt2 = 0;
+                }
+                $scope.urgent_need += remainingTime_later * $scope.night;
+                $scope.larger_need += remainingTime_later * $scope.night * $scope.ratio_urgent;
+                var PfWithNight = remainingTime_later * $scope.night * (9000 * $scope.ratio_urgent + 15000 * 2);
+                needPt2 -= PfWithNight;
+                if (needPt2 < 0) needPt2 = 0;
+
+                console.log("刷前特大後所需的pt: ", needPt2);
+
+                console.log("緊急場數: ", $scope.urgent_need);
+                $scope.larger_need += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt) * $scope.ratio_urgent;
+                $scope.urgent_need += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt);
+                console.log("緊急場數: ", $scope.urgent_need);
+                if (needPt2 > 0) {
+                    //後半場的pt/(後特大LP+(緊急次數+夜場次數)*每場緊急LP)
+                    $scope.PtperLP_larger = (needPt2 + PfWithNight) / ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp);
+                    // console.log((needPt2 + PfWithNight), ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp));
+                    console.log((needPt2 + PfWithNight), $scope.larger_need)
+                    console.log("\n後半場緊急場數: " + $scope.larger_need / $scope.ratio_urgent);
+                    console.log($scope.night * remainingTime_later);
+                } else {
+                    $scope.PtperLP_larger = PtperLP_larger_with_night;
+                }
+                console.log($scope.PtperLP_larger);
+            }
 
             //積分獎勵
             $scope.getRewards();
@@ -192,18 +272,19 @@ angular
             }
 
             //LP
-            $scope.LP_consum = needPt / $scope.PtperLP;
+            $scope.LP_consum = $scope.large_need * $scope.large_lp + $scope.larger_need * $scope.larger_lp + $scope.urgent_need * $scope.urgent_lp;
             if (targetPt == 0 || $scope.LP_consum < 0) $scope.LP_consum = 0;
             console.log("LP_consum: " + $scope.LP_consum);
             if (!$scope.isFullLevel) $scope.LP_consum += $scope.upgrade_consum_lp;
             $scope.LP_prop = $scope.get_lactate + $scope.own_lactate + 5 * ($scope.get_drink + $scope.own_drink);
+            //時間回覆LP
             if ($scope.notSleep) {
                 $scope.LP_time = remainingTime * 24 * 2;
             } else {
                 console.log(" parseInt(remainingTime): " + parseInt(remainingTime));
                 $scope.LP_time = remainingTime * 24 * 2 - parseInt(remainingTime) * ($scope.sleepingHours - 5) * 2;
             }
-            $scope.LP_need = $scope.LP_consum - $scope.LP_time - $scope.LP_prop;
+            $scope.LP_need = $scope.LP_consum - $scope.LP_time - $scope.LP_prop - level * 10;
 
             //乳酸
             if ($scope.isPrepare()) {
@@ -227,15 +308,15 @@ angular
                     $scope.buy_lactate_50 += buy_limit;
                     LP_need_rest -= buy_limit;
                     $scope.tot_diamond_lactate += buy_pack_price;
-                    console.log("*****乳酸\n" + buy_pack_price + "\n" + "\nremainingTime: ");
+                    // console.log("*****乳酸\n" + buy_pack_price + "\n" + "\nremainingTime: ");
                 }
             } else {
                 //買全部5折乳酸
                 $scope.buy_lactate_50 = parseInt(remainingTime) * buy_limit;
-                console.log("*****乳酸\n" + buy_pack_price + "\n" + lp_price + "\nremainingTime: " + parseInt(remainingTime));
+                // console.log("*****乳酸\n" + buy_pack_price + "\n" + lp_price + "\nremainingTime: " + parseInt(remainingTime));
                 LP_need_rest -= parseInt(remainingTime) * buy_limit;
                 $scope.tot_diamond_lactate += parseInt(remainingTime) * buy_pack_price;
-                console.log("*****乳酸\n" + $scope.tot_diamond_lactate + "\nremainingTime: " + parseInt(remainingTime));
+                // console.log("*****乳酸\n" + $scope.tot_diamond_lactate + "\nremainingTime: " + parseInt(remainingTime));
                 //8折
                 buy_limit = 6;
                 buy_pack_price = buy_limit * lp_price * 0.8;
@@ -249,7 +330,7 @@ angular
                         $scope.tot_diamond_lactate += buy_pack_price;
                     }
                 } else {
-                    console.log("*****乳酸\n" + $scope.tot_diamond_lactate);
+                    // console.log("*****乳酸\n" + $scope.tot_diamond_lactate);
                     $scope.buy_lactate_80 = parseInt(remainingTime) * buy_limit;
                     LP_need_rest -= parseInt(remainingTime) * buy_limit;
                     $scope.tot_diamond_lactate += parseInt(remainingTime) * buy_pack_price;
@@ -289,14 +370,6 @@ angular
             })
         }
 
-        $scope.isLargerBetter = function() {
-            if ($scope.larger_Pt / $scope.larger_lp > $scope.large_Pt / $scope.large_lp) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         $scope.calcMaxNight = function() {
             // var remainingTime = ($scope.remainingTime.getTime() + $scope.remainingTime.getTimezoneOffset() * 60 * 1000) / (1000 * 60 * 60 * 24);
             remainingTime = $scope.remainingTime.getTime() / (1000 * 60 * 60 * 24); //start from 1/1/1970=0
@@ -326,15 +399,38 @@ angular
             $scope.setRewardOfPoint();
         }
 
-        $scope.setMine = function() {
+        $scope.test = function() {
             $scope.targetPt = 2100000;
-            $scope.currentPt = 000;
+            $scope.currentPt = 0;
             $scope.urgent_lp = 3;
-            $scope.large_lp = 2;
+            $scope.large_lp = 2.5;
             $scope.larger_lp = 3;
             $scope.night = 5;
             $scope.breadAte = 9;
             $scope.state = "detail";
+        }
+        $scope.test2 = function() {
+            $scope.targetPt = 150000;
+            $scope.currentPt = 0;
+            $scope.urgent_lp = 3;
+            $scope.large_lp = 2;
+            $scope.larger_lp = 2;
+            $scope.breadAte = 9;
+            $scope.state = "simplify";
+        }
+        $scope.test3 = function() {
+            $scope.targetPt = 60000000;
+            $scope.currentPt = 0;
+            $scope.urgent_lp = 3;
+            $scope.large_lp = 1.75;
+            $scope.larger_lp = 2;
+            $scope.night = 6;
+            $scope.breadAte = 120;
+            $scope.state = "detail";
+            $scope.multiple = 30;
+            $scope.notSleep = true;
+            $scope.isFullLevel = false;
+            $scope.upgrade_consum_lp = 60;
         }
 
         stringToInt = function(input) {
@@ -388,7 +484,7 @@ angular
         $scope.get_drink = 0;
         $scope.get_bread = 0;
 
-        // getDataFromCookie();
+        getDataFromCookie(); //turn on when using localhost/server
 
         $scope.defaultSetting();
         // console.log("current\n" + new Date().toISOString() + "\n" + new Date().getTime() + "\nISOString: " + new Date().toISOString());
@@ -399,7 +495,7 @@ angular
         // console.log("deadlineDate\n" + $scope.deadlineDate.toISOString() + "\n" + $scope.deadlineDate.getTime());
         $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + 10 * 1000 * 60 * 60);
 
-        // $scope.setMine(); //just for me testing
+        // $scope.test3(); //just for me testing
         $scope.update();
 
 

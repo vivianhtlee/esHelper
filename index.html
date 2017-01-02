@@ -30,17 +30,6 @@
 
 <body>
     <h1>偶像夢幻祭演唱會活動耗鑽計算器</h1>
-    <div class="container col-md-12 col-sm-12" name="alerts">
-        <div class="container col-md-2 col-sm-0" name="alerts"> </div>
-        <div class="container col-md-8 col-sm-12" name="alerts">
-            <div class="alert alert-info alert-dismissible fade in">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <strong>誤差: </strong> 緊急夜場最大數目以前特大為準。
-            </div>
-        </div>
-    </div>
     <div class="container col-md-12 col-sm-12">
         <center>
             <div class="btn-group" role="group" aria-label="設定">
@@ -153,11 +142,11 @@
                 <label class="col-sm-3 control-label">緊急</label>
                 <div class="col-sm-9">
                     15000pt/場<br>
-                    <input type="number" ng-model="urgent_lp">lp/場<br> 緊急出率(特大:緊急):
+                    <input type="number" ng-model="urgent_lp" step="0.25">lp/場<br> 緊急出率(特大:緊急):
                     <span ng-hide="isDetail()">{{ratio_urgent}}</span>
                     <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px"/></span>
                     <br>每天
-                    <span ng-hide="isDetail()">{{night}} 場緊急夜場(0~{{max_night|number:0}}之間)</span>
+                    <span ng-hide="isDetail()">{{night|number:1}} 場緊急夜場</span>
                     <span ng-show="isDetail()">
                         <input type="number" ng-model="night" min=0 max=6 style="max-width: 50px">
                         場緊急夜場(0~{{max_night|number:0}}之間)
@@ -168,14 +157,14 @@
                 <label class="col-sm-3 control-label">前特大</label>
                 <div class="col-sm-9">
                     6000pt/場<br>
-                    <input type="number" ng-model="large_lp">lp/場
+                    <input type="number" ng-model="large_lp" step="0.25">lp/場
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">後特大</label>
                 <div class="col-sm-9">
                     9000pt/場<br>
-                    <input type="number" ng-model="larger_lp">lp/場
+                    <input type="number" ng-model="larger_lp" step="0.25">lp/場
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -191,10 +180,20 @@
                 <label class="col-sm-3 control-label">每LP收益</label>
                 <div class="col-sm-9" ng-show="isConcertLPFilled()">
                     <div ng-hide="isLargerBetter()">
-                        收益: {{PtperLP|number:1}} pt/lp
+                        收益: {{PtperLP|number:1}} pt/lp<br>
+                        <div class="alert alert-info" role="alert" ng-show="isLargeNightBetter()">
+                            <strong>前特大</strong>收益高於或等於後特大，只刷前特大。
+                        </div>
                     </div>
                     <div ng-show="isLargerBetter()">
-                        前半場收益: {{PtperLP_large|number:1}} pt/lp<br> 後半場收益: {{PtperLP_larger|number:1}} pt/lp
+                        前半場收益: {{PtperLP|number:1}} pt/lp (打出緊急夜場即停)<br> 後半場收益: {{PtperLP_larger|number:1}} pt/lp<br>
+
+                        <div class="alert alert-info" role="alert" ng-show="isLargeNightBetter()">
+                            <strong>後特大</strong>收益高於前特大，而前特大+緊急夜場的收益高於後特大無夜場的收益，所以前半場刷出緊急夜場即停，以最大化收益。
+                        </div>
+                        <div class="alert alert-info" role="alert" ng-hide="isLargeNightBetter()">
+                            <strong>後特大</strong> 收益高於前特大，前半場只清自動回覆AP，留道具刷後特大，以最大化收益。
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-9" ng-hide="isConcertLPFilled()">{請先填寫演唱會所需LP}</div>
@@ -202,9 +201,11 @@
 
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">需要演唱會</label>
-                <div class="col-sm-9">
+                <div class="col-sm-9" ng-hide="isLargerBetter()">
                     {{large_need|number:1}} 場前特大 + {{urgent_need|number:1}} 場緊急
-                    <br>****未加入後特大的情況
+                </div>
+                <div class="col-sm-9" ng-show="isLargerBetter()">
+                    {{large_need|number:1}} 場前特大 + {{larger_need|number:1}}場後特大 + {{urgent_need|number:1}} 場緊急
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -280,6 +281,31 @@
         </form>
     </div>
 
+    <div class="container col-md-12 col-sm-12" name="alerts">
+        <div class="container col-md-2 col-sm-0" name="alerts"> </div>
+        <div class="container col-md-8 col-sm-12" name="alerts">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#collapse1">誤差</a>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            雖然已經盡量考慮各種情況，但由於部份稀有的情況處理起來太麻煩，仍存在以下誤差。
+                            <br>1. 緊急夜場最大數目以前特大的數據計算。如果後特大收益高於前特大，緊急夜場數目大於實際所需。
+                            <br>2. 詳細版中，緊急夜場是整數截尾。
+                            <br>3. 後特大收益高於前特大的情況下，只計算時間自動回覆的LP，忽略前半場升級帶來的LP。
+                            <br>4. 默認緊急收益不低於特大，夜場全給緊急。如果特大收益高於緊急，仍會浪費LP開全部緊急。
+                            <br>5. 不能選擇收益低的行動，如無限夜場、特大夜場。
+                            <br>6. 不計算課程特訓的pt。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- FOOTER -->
