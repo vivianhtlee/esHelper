@@ -30,13 +30,15 @@
 
 <body>
     <h1>偶像夢幻祭演唱會活動耗鑽計算器</h1>
-    
+    <div class="container col-md-12" name="hit">
+
+    </div>
     <p class="container col-md-12">
         <center>
             <div class="btn-group" role="group" aria-label="設定">
-            <button type="button" class="btn btn-default" ng-click="prepare()" ng-disabled="isPrepare()">預算</button>
-            <button type="button" class="btn btn-default" ng-click="simplify()" ng-disabled="isSimplify()">簡化版</button>
-            <button type="button" class="btn btn-default" ng-click="detail()" ng-disabled="isDetail()">更多修改</button>
+                <button type="button" class="btn btn-default" ng-click="prepare()" ng-disabled="isPrepare()">預算</button>
+                <button type="button" class="btn btn-default" ng-click="simplify()" ng-disabled="isSimplify()">簡化版</button>
+                <button type="button" class="btn btn-default" ng-click="detail()" ng-disabled="isDetail()">詳細</button>
             </div>
         </center>
     </p>
@@ -60,8 +62,7 @@
                 <label class="col-sm-3 control-label">活動結束日</label>
                 <div class="col-sm-9">
                     <span ng-show="isSimplify()">
-                        <input class="form-control" style="width:50%" type="date" ng-model="deadlineDate"/>
-                        22:00
+                        <input class="form-control" style="width:50%" type="date" ng-model="deadlineDate"/> 22:00
                     </span>
                     <span ng-show="isDetail()">
                         <input class="form-control" type="datetime" ng-model="deadlineTime"/>
@@ -70,84 +71,84 @@
                 <label class="col-sm-3 control-label">剩餘時間</label>
                 <div class="col-sm-9">
                     {{remainingTime-1000*60*60*24|date:'d日 H小時mm分鐘':'UTC'}}
-                    <!--0 = 1/1/1970-->
                 </div>
-            </div>     
+            </div>
             <div class="form-group col-sm-12" ng-show="isPrepare()">
                 <label class="col-sm-3 control-label">活動時長</label>
                 <div class="col-sm-9">
-                    <input style="width:25%" type="number" ng-model="days"/>日
-                    <input style="width:25%" type="number" ng-model="hours"/>小時
+                    <input style="width:25%" type="number" ng-model="days" />日
+                    <input style="width:25%" type="number" ng-model="hours" />小時
                 </div>
-            </div>     
+            </div>
             <div class="form-group col-sm-12" ng-show="isDetail()">
-                <label class="col-sm-3 control-label">積分倍數</label>
+                <label class="col-sm-3 control-label">倍數加乘</label>
                 <div class="col-sm-9">
-                    <input type="number" ng-model="multiple"/><br>倍卡加乘(點數形式e.g.1.08)
+                    <input type="number" ng-model="multiple" />%<br>
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">擁有道具</label>
                 <div class="col-sm-9">
-                    <input type="number" ng-model="own_lactate" placeholder="擁有的乳酸數目"/> 瓶乳酸<br>
-                    <input type="number" ng-model="own_drink" placeholder="擁有的運動飲料數目"/> 瓶運動飲料<br>
-                    <input type="number" ng-model="own_bread" placeholder="擁有的面包數目"/> 個面包<br>
+                    <input type="number" ng-model="own_lactate" placeholder="擁有的乳酸數目" /> 瓶乳酸<br>
+                    <input type="number" ng-model="own_drink" placeholder="擁有的運動飲料數目" /> 瓶運動飲料<br>
+                    <input type="number" ng-model="own_bread" placeholder="擁有的面包數目" /> 個面包<br>
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">積分獎勵道具</label>
                 <div class="col-sm-9">
-                    {{get_lactate}} 瓶乳酸<br>
-                    {{get_drink}} 瓶運動飲料<br>
-                    {{get_bread}} 個面包<br>
+                    {{get_lactate}} 瓶乳酸<br> {{get_drink}} 瓶運動飲料<br> {{get_bread}} 個面包<br>
                     <div ng-show="isDetail()">
-                    循環一輪需: <input type="number" ng-model="maxPt"/>Pt
-                    <button ng-click="showRewards=true" ng-hide="showRewards"><span class="glyphicon glyphicon-collapse-down"></span></button>
-                    <button ng-click="showRewards=false" ng-show="showRewards"><span class="glyphicon glyphicon-collapse-up"></span></button>
+                        循環一輪需: <input type="number" ng-model="maxPt" />Pt
+                        <button ng-click="showRewards=true" ng-hide="showRewards"><span class="glyphicon glyphicon-collapse-down"></span></button>
+                        <button ng-click="showRewards=false" ng-show="showRewards"><span class="glyphicon glyphicon-collapse-up"></span></button>
 
-                    <table class="table-responsive" style="background-color: lightblue" ng-show="showRewards">
-                        <thead>
-                            <tr>
-                            <th style="width:30%">分數</th>
-                            <th style="width:15%">數量</th>
-                            <th style="width:35%">類別</th>
-                            <th></th>
-                            </tr>
-                        </thead>
-                        <tbody ng-repeat="reward in rewards track by $index">
-                        <tr>
-                            <td><input ng-model="reward.point" type="number" style="width:100%"/></td>
-                            <td><input ng-model="reward.amount" type="number" style="width:100%"/></td>
-                            <td><select name="singleSelect" ng-model="reward.type" ng-options="option for option in typeOfRewards" style="width:100%">
-                            </select></td>
-                            <td>
-                                <button ng-click="insertReward($index)"><span class="glyphicon glyphicon-plus"></span></button>
-                                <button ng-click="removeReward($index)"><span class="glyphicon glyphicon-minus"></span></button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        <table class="table-responsive" style="background-color: lightblue" ng-show="showRewards">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">分數</th>
+                                    <th style="width:15%">數量</th>
+                                    <th style="width:35%">類別</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="reward in rewards track by $index">
+                                <tr>
+                                    <td>
+                                        <input ng-model="reward.point" type="number" style="width:100%" /></td>
+                                    <td>
+                                        <input ng-model="reward.amount" type="number" style="width:100%" /></td>
+                                    <td>
+                                        <select name="singleSelect" ng-model="reward.type" ng-options="option for option in typeOfRewards" style="width:100%">
+                            </select>
+                                    </td>
+                                    <td>
+                                        <button ng-click="insertReward($index)"><span class="glyphicon glyphicon-plus"></span></button>
+                                        <button ng-click="removeReward($index)"><span class="glyphicon glyphicon-minus"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="form-group col-sm-12" ng-show="isDetail()">
                 <label class="col-sm-3 control-label">現有</label>
                 <div class="col-sm-9">
-                    <input type="number" ng-model="current_lp" placeholder="現時的lp"/>lp<br>
-                    <input type="number" ng-model="current_ap" placeholder="現時的ap"/>ap<br>
-                    <input type="number" ng-model="current_exp" placeholder="現時的exp"/>exp<br>
+                    <input type="number" ng-model="current_lp" placeholder="現時的lp" />lp<br>
+                    <input type="number" ng-model="current_ap" placeholder="現時的ap" />ap<br>
+                    <input type="number" ng-model="current_exp" placeholder="現時的exp" />exp<br>
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">緊急</label>
                 <div class="col-sm-9">
                     15000pt/場<br>
-                    <input type="number" ng-model="urgent_lp">lp/場<br>
-                    緊急出率(特大:緊急):
+                    <input type="number" ng-model="urgent_lp">lp/場<br> 緊急出率(特大:緊急):
                     <span ng-hide="isDetail()">{{ratio_urgent}}</span>
                     <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px"/></span>
-                    <br>
-                    每天<input type="number" ng-model="night" min=0 max=6 style="max-width: 50px">場緊急夜場(0~{{max_night|number:0}}之間)
+                    <br> 每天
+                    <input type="number" ng-model="night" min=0 max=6 style="max-width: 50px">場緊急夜場(0~{{max_night|number:0}}之間)
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -165,29 +166,29 @@
                 </div>
             </div>
             <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">需要演唱會</label>
-                <div class="col-sm-9">
-                    {{large_need|number:1}} 場前特大 +   
-                    {{urgent_need|number:1}} 場緊急
-                    <br>****未加入後特大的情況
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">爆擊</label>
                 <div class="col-sm-9">
-                    爆擊機率: <span ng-hide="isDetail()">{{crit_rate*100|number:-0}}%</span>
-                    <input ng-show="isDetail()" type="number" ng-model="crit_rate" step="0.01"/>
-                    <br>
-                    爆擊提升率: 20%
+                    爆擊機率: <span ng-hide="isDetail()">{{crit_rate|number:0}}%</span>
+                    <input ng-show="isDetail()" type="number" ng-model="crit_rate" /><span ng-show="isDetail()">%</span>
+
+                    <br> 爆擊提升率: 20%
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">收益</label>
-                <div class="col-sm-9">
+                <div class="col-sm-9" ng-show="isConcertLPFilled()">
                     每LP收益: {{PtperLP|number:1}} pt/lp
                 </div>
+                <div class="col-sm-9" ng-hide="isConcertLPFilled()">{請先填寫演唱會所需LP}</div>
             </div>
 
+            <div class="form-group col-sm-12">
+                <label class="col-sm-3 control-label">需要演唱會</label>
+                <div class="col-sm-9">
+                    {{large_need|number:1}} 場前特大 + {{urgent_need|number:1}} 場緊急
+                    <br>****未加入後特大的情況
+                </div>
+            </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">升級</label>
                 <div class="col-sm-9">
@@ -196,13 +197,12 @@
                         隨時間回復AP: {{AP_time|number:0}}<br>
                         <span ng-hide="isDetail()">吃下把全部{{get_bread + own_bread}}個面包</span>
                         <span ng-show="isDetail()">能吃下<input ng-model="breadAte" type="number"/>個面包(共有{{get_bread + own_bread}}個)</span>
+                        <br> 面包回復AP: {{AP_bread}}<br> 升{{levelUp|number:0}}級，得到{{levelUp*10|number:0}}lp
                         <br>
-                        面包回復AP: {{AP_bread}}<br>
-                        升{{levelUp|number:0}}級，得到{{levelUp*10|number:0}}lp<br>
                     </div>
                 </div>
             </div>
-            
+
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">演唱會升級</label>
                 <div class="col-sm-9">
@@ -211,27 +211,42 @@
                 </div>
             </div>
 
-            
+
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">LP</label>
                 <div class="col-sm-9">
-                    合共需要{{LP_consum|number:1}} LP<br>
-                    道具回復{{LP_prop}} LP<br>
-                    <input class="form-check-input" type="checkbox" ng-model="sleep">每天睡覺
-                    <span ng-hide="isDetail()">8</span>
-                    <input type="number" ng-model="sleepingHours">
-                    小時<br>
-                    時間回復{{LP_time}} LP<br>
-                    額外需要買{{LP_need|number:1}} LP
+                    合共需要{{LP_consum|number:1}} LP<br> 道具回復{{LP_prop}} LP<br>
+                    <input class="form-check-input" type="checkbox" ng-model="notSleep">夜間無縫<br>
+                    <div ng-hide="notSleep">
+                        每天睡覺
+                        <span ng-hide="isDetail()">8</span>
+                        <input ng-show="isDetail()" type="number" ng-model="sleepingHours" step="0.5" /> 小時
+                        <br>
+                    </div>
+                    時間回復{{LP_time|number:1}} LP<br> 額外需要買 {{LP_need|number:1}} LP
                 </div>
             </div>
 
             <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">購買LP</label>
+                <label class="col-sm-3 control-label">特價乳酸</label>
                 <div class="col-sm-9">
+                    5折乳酸 {{buy_lactate_50}} 瓶<br> 8折乳酸 {{buy_lactate_80}} 瓶<br> 合共使用了 {{tot_diamond_lactate}} 鑽石買乳酸
                 </div>
             </div>
 
+            <div class="form-group col-sm-12">
+                <label class="col-sm-3 control-label">直接購買LP</label>
+                <div class="col-sm-9">
+                    還欠 {{lp_buy_directly}} LP<br> 需要 {{tot_diamond_lp}} 鑽
+                </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+                <label class="col-sm-3 control-label">合計</label>
+                <div class="col-sm-9">
+                    需要使用 {{tot_diamond_lactate + tot_diamond_lp}} 鑽石
+                </div>
+            </div>
 
 
 
@@ -249,24 +264,24 @@
 
 
 
-<!-- FOOTER -->
-<hr>
-<footer class="col-md-12 col-sm-12">
-    <p class="pull-right">
-        <a style="cursor: pointer" ng-click="scrollToTop()">Back to top</a>
-    </p>
-    <p>&copy; 2016 &nbsp;<i>vivianhtlee</i></p>
-    <p>Powered by <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://glyphicons.com/" target="_blank">Glyphicons</a></p>
-</footer>
-</div>
-<!-- /.container -->
+    <!-- FOOTER -->
+    <hr>
+    <footer class="col-md-12 col-sm-12">
+        <p class="pull-right">
+            <a style="cursor: pointer" ng-click="scrollToTop()">Back to top</a>
+        </p>
+        <p>&copy; 2016 &nbsp;<i>vivianhtlee</i></p>
+        <p>Powered by <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://glyphicons.com/" target="_blank">Glyphicons</a></p>
+    </footer>
+    </div>
+    <!-- /.container -->
 
-<!-- Angular and Angular-route libraries (v1.5.7) -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-<script src="lib/angular-route.min.js"></script>
+    <!-- Angular and Angular-route libraries (v1.5.7) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="lib/angular-route.min.js"></script>
 
-<!-- JavaScript of this page -->
-<script src="js/es.js"></script>
+    <!-- JavaScript of this page -->
+    <script src="js/es.js"></script>
 
 </body>
 
