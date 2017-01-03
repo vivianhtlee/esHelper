@@ -28,8 +28,8 @@
 
 input[type=number],
 input[type=date],
-input[type=precentage],
-input[type=time] select {
+input[type=time],
+input[type=precentage] select {
     width: 75%;
     max-width: 200px;
     padding: 5px 5px;
