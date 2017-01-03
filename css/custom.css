@@ -1,4 +1,4 @@
-.table > tbody > tr > td {
+.table>tbody>tr>td {
     vertical-align: middle;
 }
 
@@ -8,27 +8,28 @@
     border-radius: 3px;
 }
 
-.label{
+.label {
     font-size: 22px;
     vertical-align: middle;
 }
 
-.login_heading{
+.login_heading {
     font-size: 24px;
     text-align: center;
-  
 }
 
-.form-horizontal .control-label{
-/* text-align:right; */
+.form-horizontal .control-label {
+    /* text-align:right; */
     vertical-align: middle;
-    text-align:right;
-    display:block;
-    background-color:#ffa;
+    text-align: right;
+    display: block;
+    background-color: #ffa;
 }
 
-
-input[type=number],input[type=date],input[type=precentage] select {
+input[type=number],
+input[type=date],
+input[type=precentage],
+input[type=time] select {
     width: 75%;
     max-width: 200px;
     padding: 5px 5px;
@@ -39,7 +40,7 @@ input[type=number],input[type=date],input[type=precentage] select {
     box-sizing: border-box;
 }
 
-select{
+select {
     width: 75%;
     max-width: 200px;
     padding: 5px 5px;
@@ -50,7 +51,7 @@ select{
     box-sizing: border-box;
 }
 
-body{
+body {
     font-family: century gothic;
 }
 
@@ -61,10 +62,9 @@ body{
     to {
         opacity: 0;
     }
-
 }
 
-td{
+td {
     padding: 10px;
     font-size: 15px;
 }

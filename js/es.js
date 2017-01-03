@@ -524,6 +524,7 @@ angular
         $scope.deadlineDate.setHours(0);
         $scope.deadlineDate.setMinutes(0);
         $scope.deadlineDate.setSeconds(0);
+        $scope.deadlineDate.setMilliseconds(0);
         // console.log("deadlineDate\n" + $scope.deadlineDate.toISOString() + "\n" + $scope.deadlineDate.getTime());
         $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + 10 * 1000 * 60 * 60);
 

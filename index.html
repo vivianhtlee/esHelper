@@ -62,13 +62,12 @@
                     <span ng-show="isSimplify()">
                         <input class="form-control" style="width:50%" type="date" ng-model="deadlineDate"/> 22:00
                     </span>
-                    <span ng-show="isDetail()">
+                    <!--<span ng-show="isDetail()">
                         <input class="form-control" type="datetime" ng-model="deadlineTime"/>
-                    </span>
+                    </span>-->
                     <span ng-show="isDetail()">
-                        ~new~
-                        <input class="form-control" type="date" ng-model="deadlineDate"/>
-                        <input class="form-control" type="time" ng-model="deadlineTime" placeholder="HH:mm"/>
+                        <input type="date" ng-model="deadlineDate"/>
+                        <input type="time" ng-model="deadlineTime" style="max-width:25%"/>
                     </span>
                 </div>
                 <label class="col-sm-3 control-label">剩餘時間</label>
@@ -163,7 +162,7 @@
                     15000pt/場<br>
                     <input type="number" ng-model="urgent_lp" step="0.25">lp/場<br> 緊急出率(特大:緊急):
                     <span ng-hide="isDetail()">{{ratio_urgent}}</span>
-                    <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px"/></span>
+                    <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px" step="0.5"/></span>
                     <br>每天
                     <span ng-hide="isDetail()">{{night|number:1}} 場緊急夜場</span>
                     <span ng-show="isDetail()">
