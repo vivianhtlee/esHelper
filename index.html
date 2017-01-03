@@ -65,6 +65,11 @@
                     <span ng-show="isDetail()">
                         <input class="form-control" type="datetime" ng-model="deadlineTime"/>
                     </span>
+                    <span ng-show="isDetail()">
+                        ~new~
+                        <input class="form-control" type="date" ng-model="deadlineDate"/>
+                        <input class="form-control" type="time" ng-model="deadlineTime" placeholder="HH:mm"/>
+                    </span>
                 </div>
                 <label class="col-sm-3 control-label">剩餘時間</label>
                 <div class="col-sm-9">
@@ -84,7 +89,7 @@
                     <input type="number" ng-model="multiple" />%<br>
                 </div>
             </div>
-            <div class="form-group col-sm-12">
+            <div class="form-group col-sm-12" ng-show="isDetail()">
                 <label class="col-sm-3 control-label">擁有道具</label>
                 <div class="col-sm-9">
                     <input type="number" ng-model="own_lactate" placeholder="擁有的乳酸數目" /> 瓶乳酸<br>
@@ -139,6 +144,20 @@
                 </div>
             </div>
             <div class="form-group col-sm-12">
+                <label class="col-sm-3 control-label">前特大</label>
+                <div class="col-sm-9">
+                    6000pt/場<br>
+                    <input type="number" ng-model="large_lp" step="0.25">lp/場
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="col-sm-3 control-label">後特大</label>
+                <div class="col-sm-9">
+                    9000pt/場<br>
+                    <input type="number" ng-model="larger_lp" step="0.25">lp/場
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">緊急</label>
                 <div class="col-sm-9">
                     15000pt/場<br>
@@ -154,25 +173,10 @@
                 </div>
             </div>
             <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">前特大</label>
-                <div class="col-sm-9">
-                    6000pt/場<br>
-                    <input type="number" ng-model="large_lp" step="0.25">lp/場
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">後特大</label>
-                <div class="col-sm-9">
-                    9000pt/場<br>
-                    <input type="number" ng-model="larger_lp" step="0.25">lp/場
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">爆擊</label>
                 <div class="col-sm-9">
                     爆擊機率: <span ng-hide="isDetail()">{{crit_rate|number:0}}%</span>
                     <input ng-show="isDetail()" type="number" ng-model="crit_rate" /><span ng-show="isDetail()">%</span>
-
                     <br> 爆擊提升率: 20%
                 </div>
             </div>

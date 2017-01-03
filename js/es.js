@@ -102,14 +102,14 @@ angular
         }
 
         $scope.isTargetFilled = function() {
-            if (typeof $scope.targetPt == "undefined" || $scope.targetPt == "NAN") {
+            if (!isNumber($scope.targetPt) || !isNumber($scope.currentPt)) {
                 return false;
             } else {
                 return true;
             }
         }
         $scope.isConcertLPFilled = function() {
-            if (typeof $scope.urgent_lp == "undefined" || typeof $scope.large_lp == "undefined" || typeof $scope.larger_lp == "undefined" || !angular.isNumber($scope.larger_lp) || !angular.isNumber($scope.large_lp) || !angular.isNumber($scope.urgent_lp)) {
+            if (!isNumber($scope.urgent_lp) || !isNumber($scope.large_lp) || !isNumber($scope.larger_lp)) {
                 return false;
             } else {
                 return true;
@@ -151,6 +151,9 @@ angular
                 $scope.sleepingHours = 8;
                 $scope.breadAte = $scope.get_bread + $scope.own_bread;
                 $scope.setRewardOfPoint();
+                $scope.own_lactate = 0;
+                $scope.own_drink = 0;
+                $scope.own_bread = 0;
                 if ($scope.isPrepare()) {
                     $scope.currentPt = 0;
                     $scope.isFullLevel = false;
@@ -158,7 +161,7 @@ angular
             }
 
 
-            if (typeof $scope.targetPt == "undefined" || $scope.targetPt == "NAN") {
+            if (!isNumber($scope.targetPt)) {
                 targetPt = 0;
             } else {
                 targetPt = $scope.targetPt;
@@ -454,34 +457,45 @@ angular
             console.log("done");
         }
 
+        isNumber = function(input) {
+            if (angular.isNumber(input) && !isNaN(input)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         getDataFromCookie = function() {
             console.log("getDataFromCookie\n" + document.cookie);
             $scope.state = getCookie("state");
-            if (!angular.isString($scope.state)) {
+            if (!angular.isString($scope.state) || $scope.state == "") {
                 $scope.state = "simplify"; //simplify, detail, prepare
             }
             $scope.targetPt = parseInt(getCookie("targetPt"), 10);
+            // if (!isNumber($scope.targetPt)) {
+            //     $scope.targetPt = 0;
+            // }
             $scope.currentPt = parseInt(getCookie("currentPt"), 10);
-            if (!angular.isNumber($scope.currentPt)) {
+            if (!isNumber($scope.currentPt)) {
                 $scope.currentPt = 0;
             }
             $scope.own_lactate = parseInt(getCookie("get_lactate"), 10);
-            if (!angular.isNumber($scope.own_lactate)) {
+            if (!isNumber($scope.own_lactate)) {
                 $scope.own_lactate = 0;
             }
             $scope.own_drink = parseInt(getCookie("get_drink"), 10);
-            if (!angular.isNumber($scope.own_drink)) {
+            if (!isNumber($scope.own_drink)) {
                 $scope.own_drink = 0;
             }
             $scope.own_bread = parseInt(getCookie("get_bread"), 10);
-            if (!angular.isNumber($scope.own_bread)) {
+            if (!isNumber($scope.own_bread)) {
                 $scope.own_bread = 0;
             }
             $scope.urgent_lp = parseInt(getCookie("urgent_lp"), 10);
             $scope.large_lp = parseInt(getCookie("large_lp"), 10);
             $scope.larger_lp = parseInt(getCookie("larger_lp"), 10);
             $scope.night = parseInt(getCookie("night"), 10);
-            if (!angular.isNumber($scope.night)) {
+            if (!isNumber($scope.night)) {
                 $scope.night = 5;
             }
             $scope.breadAte = parseInt(getCookie("breadAte"), 10);
