@@ -457,15 +457,33 @@ angular
         getDataFromCookie = function() {
             console.log("getDataFromCookie\n" + document.cookie);
             $scope.state = getCookie("state");
+            if (!angular.isString($scope.state)) {
+                $scope.state = "simplify"; //simplify, detail, prepare
+            }
             $scope.targetPt = parseInt(getCookie("targetPt"), 10);
             $scope.currentPt = parseInt(getCookie("currentPt"), 10);
-            $scope.get_lactate = parseInt(getCookie("get_lactate"), 10);
-            $scope.get_drink = parseInt(getCookie("get_drink"), 10);
-            $scope.get_bread = parseInt(getCookie("get_bread"), 10);
+            if (!angular.isNumber($scope.currentPt)) {
+                $scope.currentPt = 0;
+            }
+            $scope.own_lactate = parseInt(getCookie("get_lactate"), 10);
+            if (!angular.isNumber($scope.own_lactate)) {
+                $scope.own_lactate = 0;
+            }
+            $scope.own_drink = parseInt(getCookie("get_drink"), 10);
+            if (!angular.isNumber($scope.own_drink)) {
+                $scope.own_drink = 0;
+            }
+            $scope.own_bread = parseInt(getCookie("get_bread"), 10);
+            if (!angular.isNumber($scope.own_bread)) {
+                $scope.own_bread = 0;
+            }
             $scope.urgent_lp = parseInt(getCookie("urgent_lp"), 10);
             $scope.large_lp = parseInt(getCookie("large_lp"), 10);
             $scope.larger_lp = parseInt(getCookie("larger_lp"), 10);
             $scope.night = parseInt(getCookie("night"), 10);
+            if (!angular.isNumber($scope.night)) {
+                $scope.night = 5;
+            }
             $scope.breadAte = parseInt(getCookie("breadAte"), 10);
         }
 
