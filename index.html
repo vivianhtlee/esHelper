@@ -58,7 +58,7 @@
                     <input ng-model="numberOfPt5" type="number" ng-change="Pt5TotargerPt()" style="max-width:70px" placeholder=1>張積五
                 </div>
             </div>
-            <div class="form-group col-sm-12">
+            <div class="form-group col-sm-12" ng-hide="isPrepare()">
                 <label class="col-sm-3 control-label">現有Pt</label>
                 <div class="col-sm-9">
                     <input ng-model="currentPt" type="number" placeholder=0>
