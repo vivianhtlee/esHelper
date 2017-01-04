@@ -442,7 +442,7 @@ angular
             $scope.own_bread = 0;
             $scope.ratio_urgent = 5;
             $scope.isFullLevel = true;
-            $scope.upgrade_consum_lp = 20;
+            $scope.upgrade_consum_lp = 35;
             $scope.cleanAP = true;
             $scope.crit_rate = 15;
             $scope.days = 7;
