@@ -137,6 +137,7 @@ angular
 
         $scope.targetPtToPt5 = function() {
             $scope.numberOfPt5 = parseInt($scope.targetPt / 725000);
+            console.log("targetPtToPt5");
         }
 
         $scope.isLargeNightBetter = function() {
@@ -518,6 +519,7 @@ angular
                 $scope.night = 5;
             }
             $scope.breadAte = parseInt(getCookie("breadAte"), 10);
+            $scope.targetPtToPt5();
         }
 
         //constant
