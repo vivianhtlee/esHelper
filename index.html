@@ -238,7 +238,7 @@
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">演唱會升級</label>
                 <div class="col-sm-9">
-                    <input class="form-check-input" type="checkbox" ng-model="isFullLevel" ng-hide="isPrepare()">滿級<br>
+                    <span ng-hide="isPrepare()"><input class="form-check-input" type="checkbox" ng-model="isFullLevel">滿級<br></span>
                     <span ng-hide="isFullLevel">需要<input type="number" ng-model="upgrade_consum_lp">lp</span>
                     <div ng-hide="isFullLevel" class="alert alert-info" role="alert" id="upgrade-hint" style="max-width:325px">
                         每多刷一個滿級特大，浪費15~20LP。
