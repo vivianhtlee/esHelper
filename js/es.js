@@ -29,7 +29,6 @@ angular
     .module('es-app', [])
     .controller('esCalculatorCtrl', ['$scope', '$window', function($scope, $window) {
 
-
         $scope.isPrepare = function() {
             if ($scope.state == "prepare") return true;
             else return false;
@@ -55,6 +54,14 @@ angular
             $scope.state = "detail";
             $scope.update();
             $scope.night = parseInt($scope.night);
+        }
+
+        $scope.showNightWarning = function() {
+            if (($scope.large_need + $scope.larger_need) / $scope.ratio_urgent / $scope.night_open < 2) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         $scope.setRewardOfPoint = function() {
@@ -182,6 +189,7 @@ angular
             $scope.large_need = 0;
             $scope.urgent_need = 0;
             $scope.larger_need = 0;
+            $scope.night_open = 0;
             var needPt = (targetPt - $scope.currentPt) / (multiple * (1 + crit_rate * 0.2));
 
 
@@ -202,6 +210,7 @@ angular
                 $scope.urgent_need += needPt2 / (6000 * $scope.ratio_urgent + 15000);
                 //全場/前期收益
                 $scope.PtperLP = needPt / ($scope.large_need * $scope.large_lp + ($scope.urgent_need + $scope.night * remainingTime) * $scope.urgent_lp);
+                $scope.night_open = $scope.night * remainingTime;
             } else { //前特大收益<後特大
                 if (remainingTime > 4) {
                     remainingTime_later = 4;
@@ -223,18 +232,21 @@ angular
                     $scope.large_need += remainingTime_early * $scope.night * $scope.ratio_urgent;
                     var PfWithNight = remainingTime_early * $scope.night * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
                     needPt2 -= PfWithNight;
+                    $scope.night_open += remainingTime_early * $scope.night;
                 } else {
                     var night_early = 24 * 2 / ($scope.large_lp * $scope.ratio_urgent + $scope.urgent_lp * 2);
                     $scope.urgent_need += remainingTime_early * night_early;
                     $scope.large_need += remainingTime_early * night_early * $scope.ratio_urgent;
                     var PfWithNight = remainingTime_early * night_early * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
                     needPt2 -= PfWithNight;
+                    $scope.night_open += remainingTime_early * night_early;
                     if (needPt2 < 0) needPt2 = 0;
                 }
                 $scope.urgent_need += remainingTime_later * $scope.night;
                 $scope.larger_need += remainingTime_later * $scope.night * $scope.ratio_urgent;
                 var PfWithNight = remainingTime_later * $scope.night * (9000 * $scope.ratio_urgent + 15000 * 2);
                 needPt2 -= PfWithNight;
+                $scope.night_open += remainingTime_later * $scope.night;
                 if (needPt2 < 0) needPt2 = 0;
 
                 console.log("刷前特大後所需的pt: ", needPt2);
@@ -377,7 +389,7 @@ angular
             // var remainingTime = ($scope.remainingTime.getTime() + $scope.remainingTime.getTimezoneOffset() * 60 * 1000) / (1000 * 60 * 60 * 24);
             remainingTime = $scope.remainingTime.getTime() / (1000 * 60 * 60 * 24); //start from 1/1/1970=0
             $scope.max_night = (targetPt - $scope.currentPt) / remainingTime / (6000 * $scope.ratio_urgent + 15000 * 2);
-            if ($scope.max_night > 6) $scope.max_night = 6;
+            if ($scope.max_night > 7) $scope.max_night = 7;
         }
 
         $scope.defaultSetting = function() {
@@ -427,7 +439,7 @@ angular
             $scope.urgent_lp = 3;
             $scope.large_lp = 1.75;
             $scope.larger_lp = 2;
-            $scope.night = 6;
+            $scope.night = 7;
             $scope.breadAte = 120;
             $scope.state = "detail";
             $scope.multiple = 30;
@@ -504,7 +516,7 @@ angular
         //constant
         $scope.typeOfRewards = ['乳酸', '運動飲料', '面包'];
         $scope.remainingTime = 0;
-        $scope.max_night = 6;
+        $scope.max_night = 7;
         $scope.urgent_Pt = 15000;
         $scope.large_Pt = 6000;
         $scope.larger_Pt = 9000;
