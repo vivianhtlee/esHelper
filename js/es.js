@@ -131,6 +131,13 @@ angular
             }
         }
 
+        $scope.Pt5TotargerPt = function() {
+            $scope.targetPt = $scope.numberOfPt5 * 725000;
+        }
+
+        $scope.targetPtToPt5 = function() {
+            $scope.numberOfPt5 = parseInt($scope.targetPt / 725000);
+        }
 
         $scope.isLargeNightBetter = function() {
             var PtpreLP_large_with_night = ($scope.ratio_urgent * $scope.large_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.large_lp + $scope.urgent_lp * 2);

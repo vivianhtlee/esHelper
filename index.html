@@ -54,7 +54,7 @@
             <div class="form-group col-sm-12">
                 <label class="control-label col-sm-3">目標Pt</label>
                 <div class="col-sm-9">
-                    <input ng-model="targetPt" type="number" placeholder=725000>
+                    <input ng-model="targetPt" type="number" placeholder=725000 ng-change="targetPtToPt5()">或<input ng-model="numberOfPt5" type="number" ng-change="Pt5TotargerPt()" style="max-width:70px">張積五
                 </div>
             </div>
             <div class="form-group col-sm-12">
