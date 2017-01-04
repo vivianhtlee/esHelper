@@ -209,17 +209,23 @@ angular
             //夜場
             var needPt2 = needPt; //needPt保留不變
             if (!$scope.isLargerBetter()) { //前特大收益>=後特大
-                $scope.urgent_need += remainingTime * $scope.night;
-                $scope.large_need += remainingTime * $scope.night * $scope.ratio_urgent;
-                var PfWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
+                var PtWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
+                if (needPt2 > PtWithNight) {
+                    $scope.urgent_need += remainingTime * $scope.night;
+                    $scope.large_need += remainingTime * $scope.night * $scope.ratio_urgent;
+                    needPt2 -= PtWithNight;
+                } else {
+                    $scope.urgent_need += needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    $scope.large_need += needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2) * $scope.ratio_urgent;
+                    needPt2 = 0;
+                }
+                $scope.night_open = $scope.urgent_need;
+                console.log("刷前特大夜場後需要" + needPt2 + "pt\n緊急場數: " + $scope.urgent_need);
 
-                needPt2 -= PfWithNight;
-                if (needPt2 < 0) needPt2 = 0;
                 $scope.large_need += needPt2 / (6000 * $scope.ratio_urgent + 15000) * $scope.ratio_urgent;
                 $scope.urgent_need += needPt2 / (6000 * $scope.ratio_urgent + 15000);
                 //全場/前期收益
                 $scope.PtperLP = needPt / ($scope.large_need * $scope.large_lp + ($scope.urgent_need + $scope.night * remainingTime) * $scope.urgent_lp);
-                $scope.night_open = $scope.night * remainingTime;
             } else { //前特大收益<後特大
                 if (remainingTime > 4) {
                     remainingTime_later = 4;
@@ -232,49 +238,74 @@ angular
 
                 var PtperLP_larger_without_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp);
                 var PtperLP_larger_with_night = ($scope.ratio_urgent * $scope.larger_Pt + $scope.urgent_Pt * 2) / ($scope.ratio_urgent * $scope.larger_lp + $scope.urgent_lp * 2);
+
+                console.log("合共需要PT:" + needPt2);
                 console.log("後特大無夜場: " + PtperLP_larger_without_night + "\n後特大有夜場: " + PtperLP_larger_with_night);
 
-                console.log(needPt2);
                 //扣去前半場的前特大
                 if ($scope.isLargeNightBetter()) { //前特大+夜場>後特大無夜場
-                    $scope.urgent_need += remainingTime_early * $scope.night;
-                    $scope.large_need += remainingTime_early * $scope.night * $scope.ratio_urgent;
-                    var PfWithNight = remainingTime_early * $scope.night * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
-                    needPt2 -= PfWithNight;
-                    $scope.night_open += remainingTime_early * $scope.night;
-                } else {
+                    var PtWithNight = remainingTime_early * $scope.night * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    if (needPt2 > PtWithNight) {
+                        $scope.urgent_need += remainingTime_early * $scope.night;
+                        $scope.large_need += remainingTime_early * $scope.night * $scope.ratio_urgent;
+                        needPt2 -= PtWithNight;
+                        $scope.night_open += remainingTime_early * $scope.night;
+                    } else {
+                        $scope.urgent_need = needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                        $scope.large_need = needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2) * $scope.ratio_urgent;
+                        $scope.night_open = $scope.urgent_need;
+                        needPt2 = 0;
+                    }
+                } else { //前特大平刷
                     var night_early = 24 * 2 / ($scope.large_lp * $scope.ratio_urgent + $scope.urgent_lp * 2);
-                    $scope.urgent_need += remainingTime_early * night_early;
-                    $scope.large_need += remainingTime_early * night_early * $scope.ratio_urgent;
-                    var PfWithNight = remainingTime_early * night_early * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
-                    needPt2 -= PfWithNight;
-                    $scope.night_open += remainingTime_early * night_early;
-                    if (needPt2 < 0) needPt2 = 0;
+                    var PtWithNight = remainingTime_early * night_early * ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    if (needPt2 > PtWithNight) {
+                        $scope.urgent_need += remainingTime_early * night_early;
+                        $scope.large_need += remainingTime_early * night_early * $scope.ratio_urgent;
+                        needPt2 -= PtWithNight;
+                        $scope.night_open += remainingTime_early * night_early;
+                    } else { //不需把所有前特大刷全
+                        $scope.urgent_need = needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                        $scope.large_need = needPt2 / ($scope.large_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2) * $scope.ratio_urgent;
+                        $scope.night_open = $scope.urgent_need;
+                        needPt2 = 0;
+                    }
                 }
-                $scope.urgent_need += remainingTime_later * $scope.night;
-                $scope.larger_need += remainingTime_later * $scope.night * $scope.ratio_urgent;
-                var PfWithNight = remainingTime_later * $scope.night * (9000 * $scope.ratio_urgent + 15000 * 2);
-                needPt2 -= PfWithNight;
-                $scope.night_open += remainingTime_later * $scope.night;
-                if (needPt2 < 0) needPt2 = 0;
 
-                console.log("刷前特大後所需的pt: ", needPt2);
+                console.log("刷前特大後所需的pt: " + needPt2 + "\n緊急場數: " + $scope.urgent_need);
 
-                console.log("緊急場數: ", $scope.urgent_need);
+                //後特大夜場
+                var PtWithNight = remainingTime_later * $scope.night * (9000 * $scope.ratio_urgent + 15000 * 2);
+                if (needPt2 > PtWithNight) {
+                    $scope.urgent_need += remainingTime_later * $scope.night;
+                    $scope.larger_need += remainingTime_later * $scope.night * $scope.ratio_urgent;
+                    needPt2 -= PtWithNight;
+                    $scope.night_open += remainingTime_later * $scope.night;
+                } else {
+                    $scope.urgent_need += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    $scope.larger_need = needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2) * $scope.ratio_urgent;
+                    $scope.night_open += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt * 2);
+                    needPt2 = 0;
+                }
+
+                console.log("緊急場數: " + $scope.urgent_need + "\n刷了" + PtWithNight + "pt");
+                console.log("刷完後特大緊急夜場仍需要:", needPt2);
+
                 $scope.larger_need += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt) * $scope.ratio_urgent;
                 $scope.urgent_need += needPt2 / ($scope.larger_Pt * $scope.ratio_urgent + $scope.urgent_Pt);
+
                 console.log("緊急場數: ", $scope.urgent_need);
-                if (needPt2 > 0) {
+
+                //計算後特大的Pt per LP
+                if (needPt2 > 0) { //後特大會刷出超過夜場
                     //後半場的pt/(後特大LP+(緊急次數+夜場次數)*每場緊急LP)
-                    $scope.PtperLP_larger = (needPt2 + PfWithNight) / ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp);
-                    // console.log((needPt2 + PfWithNight), ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp));
-                    console.log((needPt2 + PfWithNight), $scope.larger_need)
-                    console.log("\n後半場緊急場數: " + $scope.larger_need / $scope.ratio_urgent);
-                    console.log($scope.night * remainingTime_later);
-                } else {
+                    $scope.PtperLP_larger = (needPt2 + PtWithNight) / ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp);
+                    // console.log((needPt2 + PtWithNight), ($scope.larger_need * $scope.larger_lp + ($scope.larger_need / $scope.ratio_urgent + $scope.night * remainingTime_later) * $scope.urgent_lp));
+                    console.log("後特大刷出" + (needPt2 + PtWithNight) + "pt\n後特大場數:" + $scope.larger_need);
+                    console.log("後半場緊急場數: " + $scope.larger_need / $scope.ratio_urgent);
+                } else { //後特大只開夜場
                     $scope.PtperLP_larger = PtperLP_larger_with_night;
                 }
-                console.log($scope.PtperLP_larger);
             }
 
             //積分獎勵
