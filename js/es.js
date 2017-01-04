@@ -214,6 +214,7 @@ angular
                 var PfWithNight = remainingTime * $scope.night * (6000 * $scope.ratio_urgent + 15000 * 2);
 
                 needPt2 -= PfWithNight;
+                if (needPt2 < 0) needPt2 = 0;
                 $scope.large_need += needPt2 / (6000 * $scope.ratio_urgent + 15000) * $scope.ratio_urgent;
                 $scope.urgent_need += needPt2 / (6000 * $scope.ratio_urgent + 15000);
                 //全場/前期收益
