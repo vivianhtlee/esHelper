@@ -426,6 +426,7 @@ angular
         }
 
         $scope.showCardsCalculator = function() {
+            console.log("test jump tp cards");
             $scope.showCards = true;
             window.location.href = "#cards";
         }
