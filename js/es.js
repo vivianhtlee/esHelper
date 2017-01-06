@@ -631,7 +631,7 @@ angular
         $scope.get_lactate = 0;
         $scope.get_drink = 0;
         $scope.get_bread = 0;
-        $scope.showCards = true;
+        $scope.showCards = false;
 
         getDataFromCookie(); //turn on when using localhost/server
 
