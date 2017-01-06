@@ -153,7 +153,9 @@ angular
         }
 
         $scope.update = function() {
-            console.log("update");
+            console.log("update\n" + $scope.showCards);
+
+
 
             //修正簡化版設定
             if (!$scope.isDetail()) {
@@ -629,7 +631,7 @@ angular
         $scope.get_lactate = 0;
         $scope.get_drink = 0;
         $scope.get_bread = 0;
-        $scope.showCards = false;
+        $scope.showCards = true;
 
         getDataFromCookie(); //turn on when using localhost/server
 
