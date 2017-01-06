@@ -180,6 +180,11 @@
                     </span>
                 </div>
             </div>
+            <div class="col-sm-12" ng-hide="isConcertLPFilled()">
+                <div class="alert alert-warning" role="alert">
+                    不知道卡組數值? 可以使用<a ng-click="showCardsCalculator()" href="#cards">卡組數值計算器</a>。
+                </div>
+            </div>
             <div class="form-group col-sm-12">
                 <label class="col-sm-3 control-label">爆擊</label>
                 <div class="col-sm-9">
@@ -289,6 +294,55 @@
                 <button id="submit" class="btn btn-primary pull-right" ng-click="flatBrush_()">乳酸平刷</button>-->
             </div>
         </form>
+    </div>
+    <div class="container col-md-12 col-sm-12" id="cards" ng-show="showCards">
+        <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
+        <h2>卡組數值計算器</h2><br>
+        <div class="container col-md-1 col-sm-0"></div>
+        <div class="container col-md-12 col-sm-12">
+            <div class="container col-md-4 col-sm-12" style="background-color: palevioletred">
+                Da
+                <br>第一隊: <input type="number" ng-model="Da_team1" ng-change="countLP('Da')">
+                <br> 第二隊: <input type="number" ng-model="Da_team2" ng-change="countLP('Da')">
+                <br> 第三隊: <input type="number" ng-model="Da_team3" ng-change="countLP('Da')">
+                <br>{{Da_lp_50W}}lp/前特大
+                <br>{{Da_lp_75W}}lp/後特大
+                <br>{{Da_lp_100W}}lp/緊急
+            </div>
+            <div class="container col-md-4 col-sm-12" style="background-color: lightblue">
+                Vo
+                <br> 第一隊: <input type="number" ng-model="Vo_team1" ng-change="countLP('Vo')">
+                <br> 第二隊: <input type="number" ng-model="Vo_team2" ng-change="countLP('Vo')">
+                <br> 第三隊: <input type="number" ng-model="Vo_team3" ng-change="countLP('Vo')">
+                <br>{{Vo_lp_50W}}lp/前特大
+                <br>{{Vo_lp_75W}}lp/後特大
+                <br>{{Vo_lp_100W}}lp/緊急
+            </div>
+            <div class="container col-md-4 col-sm-12" style="background-color: lightyellow">
+                Pf
+                <br>第一隊: <input type="number" ng-model="Pf_team1" ng-change="countLP('Pf')">
+                <br> 第二隊: <input type="number" ng-model="Pf_team2" ng-change="countLP('Pf')">
+                <br> 第三隊: <input type="number" ng-model="Pf_team3" ng-change="countLP('Pf')">
+                <br>{{Pf_lp_50W}}lp/前特大
+                <br>{{Pf_lp_75W}}lp/後特大
+                <br>{{Pf_lp_100W}}lp/緊急
+            </div>
+        </div>
+        <div class="container col-md-12 col-sm-12">
+            <center>
+                今期緊急及後特大:
+                <select ng-model="currentUrgentColor" style="width:100%" ng-change="countLP('')">
+                    <option value="Da">Da</option> 
+                    <option value="Vo">Vo</option> <!-- interpolation -->
+                    <option value="Pf">Pf</option>
+                </select>
+                <br> 卡組: {{lp_50W}}-{{lp_75W}}-{{lp_100W}}
+                <br>
+                <button class="btn btn-default" ng-click="hideCardsCalculator()">關閉</button>
+                <br>
+            </center>
+        </div>
+        <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
     </div>
 
     <div class="container col-md-12 col-sm-12" id="error">

@@ -425,6 +425,15 @@ angular
             })
         }
 
+        $scope.showCardsCalculator = function() {
+            $scope.showCards = true;
+        }
+        $scope.hideCardsCalculator = function() {
+            $scope.showCards = false;
+        }
+
+
+
         $scope.calcMaxNight = function() {
             // var remainingTime = ($scope.remainingTime.getTime() + $scope.remainingTime.getTimezoneOffset() * 60 * 1000) / (1000 * 60 * 60 * 24);
             remainingTime = $scope.remainingTime.getTime() / (1000 * 60 * 60 * 24); //start from 1/1/1970=0
@@ -517,6 +526,56 @@ angular
             }
         }
 
+        $scope.countLP = function(input) {
+            console.log("countLP" + input);
+            if (input == 'Da') {
+                $scope.Da_lp_50W = countLP_W($scope.Da_team1, $scope.Da_team2, $scope.Da_team3, 500000);
+                $scope.Da_lp_75W = countLP_W($scope.Da_team1, $scope.Da_team2, $scope.Da_team3, 750000);
+                $scope.Da_lp_100W = countLP_W($scope.Da_team1, $scope.Da_team2, $scope.Da_team3, 1000000);
+            } else if (input == 'Vo') {
+                $scope.Vo_lp_50W = countLP_W($scope.Vo_team1, $scope.Vo_team2, $scope.Vo_team3, 500000);
+                $scope.Vo_lp_75W = countLP_W($scope.Vo_team1, $scope.Vo_team2, $scope.Vo_team3, 750000);
+                $scope.Vo_lp_100W = countLP_W($scope.Vo_team1, $scope.Vo_team2, $scope.Vo_team3, 1000000);
+            } else if (input == 'Pf') {
+                $scope.Pf_lp_50W = countLP_W($scope.Pf_team1, $scope.Pf_team2, $scope.Pf_team3, 500000);
+                $scope.Pf_lp_75W = countLP_W($scope.Pf_team1, $scope.Pf_team2, $scope.Pf_team3, 750000);
+                $scope.Pf_lp_100W = countLP_W($scope.Pf_team1, $scope.Pf_team2, $scope.Pf_team3, 1000000);
+            }
+            console.log($scope.currentUrgentColor);
+
+            if ($scope.currentUrgentColor == 'Da') {
+                $scope.lp_50W = Math.min($scope.Vo_lp_50W, $scope.Pf_lp_50W);
+                $scope.lp_75W = $scope.Da_lp_75W;
+                $scope.lp_100W = $scope.Da_lp_100W;
+            } else if ($scope.currentUrgentColor == 'Vo') {
+                $scope.lp_50W = Math.min($scope.Da_lp_50W, $scope.Pf_lp_50W);
+                $scope.lp_75W = $scope.Vo_lp_75W;
+                $scope.lp_100W = $scope.Vo_lp_100W;
+            } else if ($scope.currentUrgentColor == 'Pf') {
+                $scope.lp_50W = Math.min($scope.Da_lp_50W, $scope.Vo_lp_50W);
+                $scope.lp_75W = $scope.Pf_lp_75W;
+                $scope.lp_100W = $scope.Pf_lp_100W;
+            }
+
+            if (isNumber($scope.lp_50W)) $scope.large_lp = $scope.lp_50W;
+            if (isNumber($scope.lp_75W)) $scope.larger_lp = $scope.lp_75W;
+            if (isNumber($scope.lp_100W)) $scope.urgent_lp = $scope.lp_100W;
+        }
+
+        countLP_W = function(team1, team2, team3, target) {
+            console.log(team1, team2, team3, "target: " + target);
+            var tmp = parseInt(target / ((team1 + team2 + team3) * 2)) * 3;
+            console.log("tmp: " + tmp);
+            target = target % ((team1 + team2 + team3) * 2);
+            if (team1 >= target) {
+                return tmp + 1;
+            } else if ((team1 + team2) * 1.5 >= target) {
+                return tmp + 2;
+            } else if ((team1 + team2 + team3) * 2 >= target) {
+                return tmp + 3;
+            }
+        }
+
         getDataFromCookie = function() {
             console.log("getDataFromCookie\n" + document.cookie);
             $scope.state = getCookie("state");
@@ -563,11 +622,14 @@ angular
         $scope.larger_Pt = 9000;
         lp_price = 10;
 
+
         $scope.state = "simplify"; //simplify, detail, prepare
+        $scope.currentUrgentColor = 'Da';
         $scope.currentPt = 0;
         $scope.get_lactate = 0;
         $scope.get_drink = 0;
         $scope.get_bread = 0;
+        $scope.showCards = false;
 
         getDataFromCookie(); //turn on when using localhost/server
 
