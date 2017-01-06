@@ -427,12 +427,11 @@ angular
 
         $scope.showCardsCalculator = function() {
             $scope.showCards = true;
+            window.location.href = "#cards";
         }
         $scope.hideCardsCalculator = function() {
             $scope.showCards = false;
         }
-
-
 
         $scope.calcMaxNight = function() {
             // var remainingTime = ($scope.remainingTime.getTime() + $scope.remainingTime.getTimezoneOffset() * 60 * 1000) / (1000 * 60 * 60 * 24);
