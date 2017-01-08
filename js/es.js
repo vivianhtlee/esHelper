@@ -508,6 +508,8 @@ angular
             setCookie("state", $scope.state, 7);
             setCookie("targetPt", $scope.targetPt, 7);
             setCookie("currentPt", $scope.currentPt, 7);
+            setCookie("deadlineDate", $scope.deadlineDate, 7);
+            setCookie("deadlineTime", $scope.deadlineTime, 7);
             setCookie("get_lactate", $scope.get_lactate, 7);
             setCookie("get_drink", $scope.get_drink, 7);
             setCookie("get_bread", $scope.get_bread, 7);
@@ -585,13 +587,12 @@ angular
                 $scope.state = "simplify"; //simplify, detail, prepare
             }
             $scope.targetPt = parseInt(getCookie("targetPt"), 10);
-            // if (!isNumber($scope.targetPt)) {
-            //     $scope.targetPt = 0;
-            // }
             $scope.currentPt = parseInt(getCookie("currentPt"), 10);
             if (!isNumber($scope.currentPt)) {
                 $scope.currentPt = 0;
             }
+            $scope.deadlineDate = parseInt(getCookie("deadlineDate"), 10);
+            $scope.deadlineTime = parseInt(getCookie("deadlineTime"), 10);
             $scope.own_lactate = parseInt(getCookie("get_lactate"), 10);
             if (!isNumber($scope.own_lactate)) {
                 $scope.own_lactate = 0;
