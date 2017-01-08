@@ -591,8 +591,11 @@ angular
             if (!isNumber($scope.currentPt)) {
                 $scope.currentPt = 0;
             }
-            $scope.deadlineDate = parseInt(getCookie("deadlineDate"), 10);
-            $scope.deadlineTime = parseInt(getCookie("deadlineTime"), 10);
+            console.log("get date: " + getCookie("deadlineDate"));
+            $scope.deadlineDate = new Date(getCookie("deadlineDate"));
+            console.log("$scope.deadlineDate: " + $scope.deadlineDate);
+            $scope.deadlineTime = new Date(getCookie("deadlineTime"));
+            console.log("$scope.deadlineTime: " + $scope.deadlineTime);
             $scope.own_lactate = parseInt(getCookie("get_lactate"), 10);
             if (!isNumber($scope.own_lactate)) {
                 $scope.own_lactate = 0;
@@ -634,7 +637,6 @@ angular
         $scope.get_bread = 0;
         $scope.showCards = false;
 
-        getDataFromCookie(); //turn on when using localhost/server
 
         $scope.defaultSetting();
         // console.log("current\n" + new Date().toISOString() + "\n" + new Date().getTime() + "\nISOString: " + new Date().toISOString());
@@ -645,6 +647,8 @@ angular
         $scope.deadlineDate.setMilliseconds(0);
         // console.log("deadlineDate\n" + $scope.deadlineDate.toISOString() + "\n" + $scope.deadlineDate.getTime());
         $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + 10 * 1000 * 60 * 60);
+
+        getDataFromCookie(); //turn on when using localhost/server
 
         // $scope.test3(); //just for me testing
         $scope.update();
