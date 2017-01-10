@@ -169,7 +169,7 @@
                     <input type="number" ng-model="urgent_lp" step="0.25">lp/場<br> 緊急出率(特大:緊急):
                     <span ng-hide="isDetail()">{{ratio_urgent}}</span>
                     <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px" step="0.5"/></span>
-                    <br>每天
+                    <br>
                     <span ng-hide="isDetail()">{{night|number:1}} 場緊急夜場</span>
                     <div class="alert alert-info" role="alert" ng-hide="isDetail()" ng-show="showNightWarning()">
                         每天至少開{{night|number:1}}場免費緊急夜場。請合理分配刷演唱會的時間。
@@ -361,11 +361,12 @@
                             雖然已經盡量考慮各種情況，但由於部份稀有的情況處理起來太麻煩，仍存在以下誤差。
                             <br>1. 緊急夜場最大數目以前特大的數據計算。如果後特大收益高於前特大，緊急夜場數目大於實際所需。
                             <br>2. 詳細版中，緊急夜場是截尾整數。
-                            <br>3. 後特大收益高於前特大的情況下，只計算時間自動回覆的LP，忽略前半場升級帶來的LP。
-                            <br>4. 默認緊急收益不低於特大，夜場全給緊急。如果特大收益高於緊急，仍會浪費LP開全部緊急。
-                            <br>5. 不能選擇收益低的行動，如無限夜場、特大夜場、後特大收益高卻刷前特大。
-                            <br>6. 不計算課程特訓的pt。
-                            <br>7. 升級時LP浪費(e.g.剩餘10分鐘回復)不列入計算。
+                            <br>3. 假設活動第一天已經能緊急夜場。
+                            <br>4. 後特大收益高於前特大的情況下，只計算時間自動回覆的LP，忽略前半場升級帶來的LP。
+                            <br>5. 默認緊急收益不低於特大，夜場全給緊急。如果特大收益高於緊急，仍會浪費LP開全部緊急。
+                            <br>6. 不能選擇收益低的行動，如無限夜場、特大夜場、後特大收益高卻刷前特大。
+                            <br>7. 不計算課程特訓的pt。
+                            <br>8. 升級時LP浪費(e.g.剩餘10分鐘回復)不列入計算。
                         </div>
                     </div>
                 </div>
