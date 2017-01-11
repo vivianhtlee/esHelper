@@ -408,19 +408,25 @@ angular
             $scope.get_bread = 0;
             var round = parseInt((targetPt - $scope.currentPt) / $scope.maxPt);
             angular.forEach($scope.rewards, function(reward) {
+                var targetPt2 = targetPt % $scope.maxPt;
+                var currrentPt2 = $scope.currentPt % $scope.maxPt;
+
                 if (reward.type == $scope.typeOfRewards[0]) {
                     $scope.get_lactate += reward.amount * round;
-                    if (targetPt % $scope.maxPt > reward.point && $scope.currentPt % $scope.maxPt < reward.point) {
+                    if ((targetPt2 > reward.point && currrentPt2 < reward.point) ||
+                        (targetPt2 < currrentPt2) && (currrentPt2 < reward.point || targetPt2 > reward.point)) {
                         $scope.get_lactate += reward.amount;
                     }
                 } else if (reward.type == $scope.typeOfRewards[1]) {
                     $scope.get_drink += reward.amount * round;
-                    if (targetPt % $scope.maxPt > reward.point && $scope.currentPt % $scope.maxPt < reward.point) {
+                    if ((targetPt2 > reward.point && currrentPt2 < reward.point) ||
+                        (targetPt2 < currrentPt2) && (currrentPt2 < reward.point || targetPt2 > reward.point)) {
                         $scope.get_drink += reward.amount;
                     }
                 } else if (reward.type == $scope.typeOfRewards[2]) {
                     $scope.get_bread += reward.amount * round;
-                    if (targetPt % $scope.maxPt > reward.point && $scope.currentPt % $scope.maxPt < reward.point) {
+                    if ((targetPt2 > reward.point && currrentPt2 < reward.point) ||
+                        (targetPt2 < currrentPt2) && (currrentPt2 < reward.point || targetPt2 > reward.point)) {
                         $scope.get_bread += reward.amount;
                     }
                 }
