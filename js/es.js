@@ -225,6 +225,10 @@ angular
                 remainingTime = $scope.days + $scope.hours / 24;
             } else {
                 remainingTime = $scope.remainingTime.getTime() / (1000 * 60 * 60 * 24); //start from 1/1/1970=0
+                if (remainingTime > $scope.days + $scope.hours / 24) {
+                    remainingTime = $scope.days + $scope.hours / 24;
+                    $scope.remainingTime = new Date(remainingTime * (1000 * 60 * 60 * 24));
+                }
             }
 
             var multiple = 1 + $scope.multiple / 100;
