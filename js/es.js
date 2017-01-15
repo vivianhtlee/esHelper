@@ -102,6 +102,15 @@ angular
 
             if ($scope.isSimplify()) {
                 $scope.calcDeadlineTime();
+            } else if ($scope.isDetail()) {
+                console.log("deadline: " + $scope.deadlineTime);
+                console.log("deadline: " + $scope.deadlineDate);
+                $scope.deadlineDate.setHours(0);
+                $scope.deadlineDate.setMinutes(0);
+                $scope.deadlineDate.setSeconds(0);
+                $scope.deadlineDate.setMilliseconds(0);
+                $scope.deadlineTime.setDate(0);
+                $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime());
             }
             // console.log("deadlineTime\n" + $scope.deadlineTime.toISOString() + "\n" + $scope.deadlineTime.getTime());
 
@@ -654,7 +663,7 @@ angular
         $scope.deadlineDate.setSeconds(0);
         $scope.deadlineDate.setMilliseconds(0);
         // console.log("deadlineDate\n" + $scope.deadlineDate.toISOString() + "\n" + $scope.deadlineDate.getTime());
-        $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + 10 * 1000 * 60 * 60);
+        $scope.deadlineTime = new Date(22 * 1000 * 60 * 60);
 
         getDataFromCookie(); //turn on when using localhost/server
 
