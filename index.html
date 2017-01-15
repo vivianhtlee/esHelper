@@ -81,8 +81,13 @@
                     <span ng-show="showDate()">
                     {{remainingTime-1000*60*60*24|date:'d日 H小時mm分鐘':'UTC'}}
                     </span>
-                    <span ng-hide="showDate()">
+                    <span ng-hide="showDate()||passdeadline()">
                     {{remainingTime-1000*60*60*24|date:'H小時mm分鐘':'UTC'}}
+                    </span>
+                    <span ng-show="passdeadline()">
+                        <div class="alert alert-danger" role="alert">
+                           活動已結束。
+                        </div>
                     </span>
                 </div>
             </div>

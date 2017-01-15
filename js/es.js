@@ -135,6 +135,14 @@ angular
             }
         }
 
+        $scope.passdeadline = function() {
+            if ($scope.remainingTime < 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         $scope.isTargetFilled = function() {
             if (!isNumber($scope.targetPt) || !isNumber($scope.currentPt)) {
                 return false;
