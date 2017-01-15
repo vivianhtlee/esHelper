@@ -110,7 +110,13 @@ angular
                 $scope.deadlineDate.setSeconds(0);
                 $scope.deadlineDate.setMilliseconds(0);
                 $scope.deadlineTime.setDate(0);
-                $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime());
+                $scope.deadlineTime.setSeconds(0);
+                $scope.deadlineTime.setMilliseconds(0);
+                console.log("deadline: " + $scope.deadlineTime);
+                console.log("deadline: " + $scope.deadlineDate);
+                // $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime());
+                console.log("deadline: " + $scope.deadlineTime);
+                console.log("deadline: " + $scope.deadlineDate);
             }
             // console.log("deadlineTime\n" + $scope.deadlineTime.toISOString() + "\n" + $scope.deadlineTime.getTime());
 
