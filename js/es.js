@@ -643,15 +643,15 @@ angular
             if (getCookie("deadlineTime") != "")
                 $scope.deadlineTime = new Date(getCookie("deadlineTime"));
             console.log("$scope.deadlineTime: " + $scope.deadlineTime);
-            $scope.own_lactate = parseInt(getCookie("get_lactate"), 10);
+            $scope.own_lactate = parseInt(getCookie("own_lactate"), 10);
             if (!isNumber($scope.own_lactate)) {
                 $scope.own_lactate = 0;
             }
-            $scope.own_drink = parseInt(getCookie("get_drink"), 10);
+            $scope.own_drink = parseInt(getCookie("own_drink"), 10);
             if (!isNumber($scope.own_drink)) {
                 $scope.own_drink = 0;
             }
-            $scope.own_bread = parseInt(getCookie("get_bread"), 10);
+            $scope.own_bread = parseInt(getCookie("own_bread"), 10);
             if (!isNumber($scope.own_bread)) {
                 $scope.own_bread = 0;
             }
