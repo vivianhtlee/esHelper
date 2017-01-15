@@ -103,20 +103,21 @@ angular
             if ($scope.isSimplify()) {
                 $scope.calcDeadlineTime();
             } else if ($scope.isDetail()) {
-                console.log("deadline: " + $scope.deadlineTime);
-                console.log("deadline: " + $scope.deadlineDate);
+                console.log("deadlineTime: " + $scope.deadlineTime);
+                console.log("deadlineDate: " + $scope.deadlineDate);
                 $scope.deadlineDate.setHours(0);
                 $scope.deadlineDate.setMinutes(0);
                 $scope.deadlineDate.setSeconds(0);
                 $scope.deadlineDate.setMilliseconds(0);
-                $scope.deadlineTime.setDate(0);
+                $scope.deadlineTime.setYear(1970);
+                $scope.deadlineTime.setMonth(0);
+                $scope.deadlineTime.setDate(1);
                 $scope.deadlineTime.setSeconds(0);
                 $scope.deadlineTime.setMilliseconds(0);
-                console.log("deadline: " + $scope.deadlineTime);
-                console.log("deadline: " + $scope.deadlineDate);
-                // $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime());
-                console.log("deadline: " + $scope.deadlineTime);
-                console.log("deadline: " + $scope.deadlineDate);
+                console.log("deadlineTime: " + $scope.deadlineTime + "\n" + $scope.deadlineTime.getTime());
+                console.log("deadlineDate: " + $scope.deadlineDate + "\n" + $scope.deadlineDate.getTime());
+                $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime() + 8 * 60 * 60 * 1000);
+                console.log("deadlineTime: " + $scope.deadlineTime + "\n" + $scope.deadlineTime.getTime());
             }
             // console.log("deadlineTime\n" + $scope.deadlineTime.toISOString() + "\n" + $scope.deadlineTime.getTime());
 
