@@ -555,9 +555,9 @@ angular
             setCookie("currentPt", $scope.currentPt, 7);
             setCookie("deadlineDate", $scope.deadlineDate, 7);
             setCookie("deadlineTime", $scope.deadlineTime, 7);
-            setCookie("get_lactate", $scope.get_lactate, 7);
-            setCookie("get_drink", $scope.get_drink, 7);
-            setCookie("get_bread", $scope.get_bread, 7);
+            setCookie("own_lactate", $scope.own_lactate, 7);
+            setCookie("own_drink", $scope.own_drink, 7);
+            setCookie("own_bread", $scope.own_bread, 7);
             setCookie("currentPt", $scope.currentPt, 7);
             setCookie("urgent_lp", $scope.urgent_lp, 30);
             setCookie("large_lp", $scope.large_lp, 30);
