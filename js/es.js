@@ -187,10 +187,16 @@ angular
             }
         }
 
+        eventNotStart = function() {
+            if (remainingTime >= $scope.days + $scope.hours / 24) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         $scope.update = function() {
             console.log("update\n" + $scope.showCards);
-
-
 
             //修正簡化版設定
             if (!$scope.isDetail()) {
@@ -225,7 +231,7 @@ angular
                 remainingTime = $scope.days + $scope.hours / 24;
             } else {
                 remainingTime = $scope.remainingTime.getTime() / (1000 * 60 * 60 * 24); //start from 1/1/1970=0
-                if (remainingTime > $scope.days + $scope.hours / 24) {
+                if (remainingTime > $scope.days + $scope.hours / 24) { //活動未開始
                     remainingTime = $scope.days + $scope.hours / 24;
                     $scope.remainingTime = new Date(remainingTime * (1000 * 60 * 60 * 24));
                 }
@@ -383,7 +389,7 @@ angular
             $scope.LP_need = $scope.LP_consum - $scope.LP_time - $scope.LP_prop - level * 10;
 
             //乳酸
-            if ($scope.isPrepare()) {
+            if ($scope.isPrepare() || eventNotStart()) {
                 remainingTime += 1; //未買第一天的乳酸
             }
             LP_need_rest = Math.ceil($scope.LP_need);
@@ -432,7 +438,7 @@ angular
                     $scope.tot_diamond_lactate += parseInt(remainingTime) * buy_pack_price;
                 }
             }
-            if ($scope.isPrepare()) {
+            if ($scope.isPrepare() || eventNotStart()) {
                 remainingTime -= 1; //未買第一天的乳酸
             }
             if (LP_need_rest < 0) LP_need_rest = 0;
