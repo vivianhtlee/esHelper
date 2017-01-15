@@ -116,7 +116,9 @@ angular
                 $scope.deadlineTime.setMilliseconds(0);
                 console.log("deadlineTime: " + $scope.deadlineTime + "\n" + $scope.deadlineTime.getTime());
                 console.log("deadlineDate: " + $scope.deadlineDate + "\n" + $scope.deadlineDate.getTime());
-                $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime() + 8 * 60 * 60 * 1000);
+                console.log("getTimezoneOffset: " + $scope.deadlineTime.getTimezoneOffset());
+                // $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime() + 8 * 60 * 60 * 1000);
+                $scope.deadlineTime = new Date($scope.deadlineDate.getTime() + $scope.deadlineTime.getTime() - $scope.deadlineTime.getTimezoneOffset() * 60 * 1000);
                 console.log("deadlineTime: " + $scope.deadlineTime + "\n" + $scope.deadlineTime.getTime());
             }
             // console.log("deadlineTime\n" + $scope.deadlineTime.toISOString() + "\n" + $scope.deadlineTime.getTime());
