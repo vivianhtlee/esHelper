@@ -78,10 +78,10 @@
                 </div>
                 <label class="col-sm-3 control-label">剩餘時間</label>
                 <div class="col-sm-9">
-                    <span ng-show="remainingTime>1000*60*60*24">
+                    <span ng-show="showDate()">
                     {{remainingTime-1000*60*60*24|date:'d日 H小時mm分鐘':'UTC'}}
                     </span>
-                    <span ng-hide="remainingTime>1000*60*60*24">
+                    <span ng-hide="showDate()">
                     {{remainingTime-1000*60*60*24|date:'H小時mm分鐘':'UTC'}}
                     </span>
                 </div>

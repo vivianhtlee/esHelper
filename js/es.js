@@ -121,6 +121,15 @@ angular
             // console.log("deadlineTime\n" + $scope.deadlineTime.toISOString() + "\n" + $scope.deadlineTime.getTime());
 
             $scope.remainingTime = new Date($scope.deadlineTime.getTime() - currentTime.getTime());
+            console.log("remainingTime: " + $scope.remainingTime + "\nremainingTime.date: " + $scope.remainingTime.toISOString());
+        }
+
+        $scope.showDate = function() {
+            if ($scope.remainingTime >= 1000 * 60 * 60 * 24) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         $scope.isTargetFilled = function() {
