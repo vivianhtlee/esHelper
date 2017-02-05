@@ -374,7 +374,7 @@ angular
             }
 
             //LP
-            $scope.LP_consum = $scope.large_need * $scope.large_lp + $scope.larger_need * $scope.larger_lp + $scope.urgent_need * $scope.urgent_lp;
+            $scope.LP_consum = $scope.large_need * $scope.large_lp + $scope.larger_need * $scope.larger_lp + ($scope.urgent_need + $scope.night_open) * $scope.urgent_lp;
             if (targetPt == 0 || $scope.LP_consum < 0) $scope.LP_consum = 0;
             console.log("LP_consum: " + $scope.LP_consum);
             if (!$scope.isFullLevel) $scope.LP_consum += $scope.upgrade_consum_lp;
