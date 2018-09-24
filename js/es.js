@@ -65,22 +65,23 @@ angular
         }
 
         $scope.setRewardOfPoint = function() {
-            $scope.maxPt = 1450000;
+            $scope.maxPt = 1600000;
             $scope.rewards = [];
             $scope.rewards = [
-                { "point": 300, "amount": 3, "type": $scope.typeOfRewards[0] },
-                { "point": 600, "amount": 1, "type": '面包' },
-                { "point": 900, "amount": 3, "type": '乳酸' },
-                { "point": 3500, "amount": 1, "type": '面包' },
-                { "point": 7000, "amount": 1, "type": '運動飲料' },
-                { "point": 30000, "amount": 1, "type": '面包' },
-                { "point": 35000, "amount": 1, "type": '運動飲料' },
-                { "point": 140000, "amount": 1, "type": '運動飲料' },
-                { "point": 360000, "amount": 1, "type": '運動飲料' },
-                { "point": 500000, "amount": 1, "type": '面包' },
-                { "point": 640000, "amount": 1, "type": '運動飲料' },
-                { "point": 1070000, "amount": 1, "type": '面包' },
-                { "point": 1370000, "amount": 3, "type": '運動飲料' }
+                { "point": 330, "amount": 3, "type": $scope.typeOfRewards[0] },
+                { "point": 660, "amount": 1, "type": '面包' },
+                { "point": 990, "amount": 3, "type": '乳酸' },
+                { "point": 3900, "amount": 1, "type": '面包' },
+                { "point": 7700, "amount": 1, "type": '運動飲料' },
+                { "point": 15000, "amount": 1, "type": '面包' },
+                { "point": 20000, "amount": 1, "type": '運動飲料' },
+                { "point": 22000, "amount": 1, "type": '面包' },
+                { "point": 180000, "amount": 1, "type": '運動飲料' },
+                { "point": 440000, "amount": 1, "type": '運動飲料' },
+                { "point": 560000, "amount": 1, "type": '面包' },
+                { "point": 720000, "amount": 1, "type": '運動飲料' },
+                { "point": 1170000, "amount": 1, "type": '面包' },
+                { "point": 1520000, "amount": 3, "type": '運動飲料' }
             ];
         };
 
@@ -482,6 +483,7 @@ angular
             console.log("test jump tp cards");
             $scope.showCards = true;
             window.location.href = "#cards";
+            
         }
         $scope.hideCardsCalculator = function() {
             $scope.showCards = false;

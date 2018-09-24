@@ -1,410 +1,822 @@
+<!--
+© 2016 vivianhtlee
+Revamp UI by 2018 GwenHo
+
+-->
 <!DOCTYPE html>
 <html lang="en" ng-app="es-app" ng-controller="esCalculatorCtrl">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="teamform, team">
-    <!-- The meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>偶像夢幻祭演唱會活動耗鑽計算器</title>
-
-    <!-- libraries and CSS 	  
-		JQuery: Necessary for some bootstrap interactions (v1.12.4 is used)		
-		Bootstrap: Library and CSS for bootstrap framework (v3.3.7 is used)
-		Font-awesome: More icons for the web development (v4.6.3 is used)		
-		site.css: A customized css for our web application. Not from any web framework. 
-	  -->
-
-    <script src="lib/jquery.min.js"></script>
-    <script src="lib/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/custom.css">
-
-
-</head>
-<!-- test -->
-
-<body>
-    <h1>偶像夢幻祭演唱會活動耗鑽計算器</h1>
-    <div class="container col-md-12 col-sm-12">
-        <div class="col-md-2 col-sm-0"></div>
-        <div class="container col-md-8 col-sm-12">
-            <div class="alert alert-info" role="alert">
-                <strong>提示：</strong>這計算器假設以最省鑽的打法刷演唱會。誤差詳情見<a href="#error">底部</a>。
-            </div>
-        </div>
-    </div>
-    <div class="container col-md-12 col-sm-12">
-        <center>
-            <div class="btn-group" role="group" aria-label="設定">
-                <button type="button" class="btn btn-default" ng-click="prepare()" ng-disabled="isPrepare()">預算</button>
-                <button type="button" class="btn btn-default" ng-click="simplify()" ng-disabled="isSimplify()">簡化版</button>
-                <button type="button" class="btn btn-default" ng-click="detail()" ng-disabled="isDetail()">詳細</button>
-            </div>
-        </center>
-    </div>
-    <hr>
-    <div class="col-md-2 col-sm-0"></div>
-    <div class="container col-md-8 col-sm-12">
-        <form ng-keyup="update()" id="form-horizontal" name="form">
-            <div class="form-group col-sm-12">
-                <label class="control-label col-sm-3">目標Pt</label>
-                <div class="col-sm-9">
-                    <input ng-model="targetPt" type="number" placeholder=725000 ng-change="targetPtToPt5()"> 或
-                    <input ng-model="numberOfPt5" type="number" ng-change="Pt5TotargerPt()" style="max-width:70px" placeholder=1>張積五
-                </div>
-            </div>
-            <div class="form-group col-sm-12" ng-hide="isPrepare()">
-                <label class="col-sm-3 control-label">現有Pt</label>
-                <div class="col-sm-9">
-                    <input ng-model="currentPt" type="number" placeholder=0>
-                </div>
-            </div>
-            <!--活動時長-->
-            <div class="form-group col-sm-12" ng-hide="isPrepare()">
-                <label class="col-sm-3 control-label">活動結束日</label>
-                <div class="col-sm-9">
-                    <span ng-show="isSimplify()">
-                        <input class="form-control" style="width:50%" type="date" ng-model="deadlineDate"/> 22:00
-                    </span>
-                    <span ng-show="isDetail()">
-                        <input type="date" ng-model="deadlineDate"/>
-                        <input type="time" ng-model="deadlineTime"/>
-                    </span>
-                </div>
-                <label class="col-sm-3 control-label">剩餘時間</label>
-                <div class="col-sm-9">
-                    <span ng-show="showDate()">
-                    {{remainingTime-1000*60*60*24|date:'d日 H小時mm分鐘':'UTC'}}
-                    </span>
-                    <span ng-hide="showDate()||passdeadline()">
-                    {{remainingTime-1000*60*60*24|date:'H小時mm分鐘':'UTC'}}
-                    </span>
-                    <span ng-show="passdeadline()">
-                        <div class="alert alert-danger" role="alert">
-                           活動已結束。
-                        </div>
-                    </span>
-                </div>
-            </div>
-            <div class="form-group col-sm-12" ng-show="isPrepare()">
-                <label class="col-sm-3 control-label">活動時長</label>
-                <div class="col-sm-9">
-                    <input style="width:25%" type="number" ng-model="days" />日
-                    <input style="width:25%" type="number" ng-model="hours" />小時
-                </div>
-            </div>
-            <div class="form-group col-sm-12" ng-show="isDetail()">
-                <label class="col-sm-3 control-label">倍數加乘</label>
-                <div class="col-sm-9">
-                    <input type="number" ng-model="multiple" />%<br>
-                </div>
-            </div>
-            <div class="form-group col-sm-12" ng-show="isDetail()">
-                <label class="col-sm-3 control-label">擁有道具</label>
-                <div class="col-sm-9">
-                    <input type="number" ng-model="own_lactate" placeholder="擁有的乳酸數目" /> 瓶乳酸<br>
-                    <input type="number" ng-model="own_drink" placeholder="擁有的運動飲料數目" /> 瓶運動飲料<br>
-                    <input type="number" ng-model="own_bread" placeholder="擁有的面包數目" /> 個面包<br>
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">積分獎勵道具</label>
-                <div class="col-sm-9">
-                    {{get_lactate}} 瓶乳酸<br> {{get_drink}} 瓶運動飲料<br> {{get_bread}} 個面包<br>
-                    <div ng-show="isDetail()">
-                        循環一輪需: <input type="number" ng-model="maxPt" />Pt
-                        <button ng-click="showRewards=true" ng-hide="showRewards"><span class="glyphicon glyphicon-collapse-down"></span></button>
-                        <button ng-click="showRewards=false" ng-show="showRewards"><span class="glyphicon glyphicon-collapse-up"></span></button>
-
-                        <table class="table-responsive" style="background-color: lightblue" ng-show="showRewards">
-                            <thead>
-                                <tr>
-                                    <th style="width:30%">分數</th>
-                                    <th style="width:15%">數量</th>
-                                    <th style="width:35%">類別</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody ng-repeat="reward in rewards track by $index">
-                                <tr>
-                                    <td>
-                                        <input ng-model="reward.point" type="number" style="width:100%" /></td>
-                                    <td>
-                                        <input ng-model="reward.amount" type="number" style="width:100%" /></td>
-                                    <td>
-                                        <select ng-model="reward.type" ng-options="option for option in typeOfRewards" style="width:100%">
-                            </select>
-                                    </td>
-                                    <td>
-                                        <button ng-click="insertReward($index)"><span class="glyphicon glyphicon-plus"></span></button>
-                                        <button ng-click="removeReward($index)"><span class="glyphicon glyphicon-minus"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
+            <meta content="width=device-width, initial-scale=1" name="viewport"/>
+            <meta content="teamform, team" name="keywords"/>
+            <!-- The meta tags *must* come first in the head; any other head content must come *after* these tags -->
+            <title>
+                偶像夢幻祭演唱會活動耗鑽計算器 2018
+            </title>
+            <!-- libraries and CSS    
+        JQuery: Necessary for some bootstrap interactions (v3.2.1 is used)     
+        Bootstrap: Library and CSS for bootstrap framework (v4.0.0 is used)   
+        custom.css: A customized css for our web application. Not from any web framework. 
+        mdb.min.css: Library and CSS for material design(v4.5.0 is used)
+        fontawesome: icon Library that used in showReward to replace glyphicon (v5.1.0 is used)
+      -->
+            <script src="js/jquery-3.2.1.min.js">
+            </script>
+            <script src="js/bootstrap.min.js">
+            </script>
+            <link href="css/bootstrap.min.css" rel="stylesheet"/>
+            <link href="css/mdb.min.css" rel="stylesheet" type="text/css"/>
+            <link href="css/compiled.min.css" rel="stylesheet" type="text/css"/>
+            <link href="css/custom.css" rel="stylesheet"/>
+            <link crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" rel="stylesheet"/>
+        </meta>
+    </head>
+    <!-- test -->
+    <body>
+        <!-- title  -->
+        <div class="container my-5">
+            <div class="card px-3 py-3">
+                <div class="row justify-content-center my-4">
+                    <div class="col-12 text-center">
+                        <h1>
+                            偶像夢幻祭
+                        </h1>
+                        <h2>
+                            演唱會活動耗鑽計算器(台服、陸服適用)
+                        </h2>
                     </div>
                 </div>
-            </div>
-            <div class="form-group col-sm-12" ng-show="isDetail()">
-                <label class="col-sm-3 control-label">現有</label>
-                <div class="col-sm-9">
-                    <input type="number" ng-model="current_lp" placeholder="現時的lp" />lp<br>
-                    <input type="number" ng-model="current_ap" placeholder="現時的ap" />ap<br>
-                    <input type="number" ng-model="current_exp" placeholder="現時的exp" />exp<br>
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">前特大</label>
-                <div class="col-sm-9">
-                    6000pt/場<br>
-                    <input type="number" ng-model="large_lp" step="0.25">lp/場
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">後特大</label>
-                <div class="col-sm-9">
-                    9000pt/場<br>
-                    <input type="number" ng-model="larger_lp" step="0.25">lp/場
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">緊急</label>
-                <div class="col-sm-9">
-                    15000pt/場<br>
-                    <input type="number" ng-model="urgent_lp" step="0.25">lp/場<br> 緊急出率(特大:緊急):
-                    <span ng-hide="isDetail()">{{ratio_urgent}}</span>
-                    <span ng-show="isDetail()"><input type="number" ng-model="ratio_urgent" style="width:50px" step="0.5"/></span>
-                    <br>
-                    <span ng-hide="isDetail()">{{night|number:1}} 場緊急夜場</span>
-                    <div class="alert alert-info" role="alert" ng-hide="isDetail()" ng-show="showNightWarning()">
-                        每天至少開{{night|number:1}}場免費緊急夜場。請合理分配刷演唱會的時間。
-                    </div>
-                    <span ng-show="isDetail()">
-                        <input type="number" ng-model="night" min=0 max=7 style="max-width: 50px">
-                        場緊急夜場(0~{{max_night|number:0}}之間)
-                    </span>
-                </div>
-            </div>
-            <div class="col-sm-12" ng-hide="isConcertLPFilled()">
-                <div class="alert alert-warning" role="alert">
-                    不知道卡組數值? 可以使用<a ng-click="showCardsCalculator()">卡組數值計算器</a>。
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">爆擊</label>
-                <div class="col-sm-9">
-                    爆擊機率: <span ng-hide="isDetail()">{{crit_rate|number:0}}%</span>
-                    <input ng-show="isDetail()" type="number" ng-model="crit_rate" /><span ng-show="isDetail()">%</span>
-                    <br> 爆擊提升率: 20%
-                </div>
-            </div>
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">每LP收益</label>
-                <div class="col-sm-9" ng-show="isConcertLPFilled()">
-                    <div ng-hide="isLargerBetter()">
-                        收益: {{PtperLP|number:1}} pt/lp<br>
-                        <div class="alert alert-info" role="alert" ng-show="isLargeNightBetter()">
-                            <strong>前特大</strong>收益高於或等於後特大，只刷前特大。
-                        </div>
-                    </div>
-                    <div ng-show="isLargerBetter()">
-                        前半場收益: {{PtperLP|number:1}} pt/lp<br> 後半場收益: {{PtperLP_larger|number:1}} pt/lp<br>
-
-                        <div class="alert alert-info" role="alert" ng-show="isLargeNightBetter()">
-                            <strong>後特大</strong>收益高於前特大，而前特大+緊急夜場的收益高於後特大無夜場的收益，所以前半場刷出緊急夜場即停，以最大化收益。
-                        </div>
-                        <div class="alert alert-info" role="alert" ng-hide="isLargeNightBetter()">
-                            <strong>後特大</strong> 收益高於前特大，前半場只清自動回覆AP，留道具刷後特大，以最大化收益。
+                <div class="row justify-content-center">
+                    <div class=" col-md-8 col-xs-12 text-center">
+                        <div class="alert alert-info" role="alert">
+                            <strong>
+                                提示：
+                            </strong>
+                            此活動耗鑽計算器是假設以最省鑽的打法刷演唱會。誤差詳情見
+                            <a href="#error">
+                                底部
+                            </a>
+                            。
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-9" ng-hide="isConcertLPFilled()">{請先填寫演唱會所需LP}</div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">需要演唱會</label>
-                <div class="col-sm-9" ng-hide="isLargerBetter()">
-                    {{large_need|number:1}}場前特大 + {{urgent_need|number:1}}場緊急<br> 當中有 {{night_open|number:1}} 場緊急夜場
-                </div>
-                <div class="col-sm-9" ng-show="isLargerBetter()">
-                    {{large_need|number:1}}場前特大 + {{larger_need|number:1}}場後特大 + {{urgent_need|number:1}}場緊急<br> 當中有 {{night_open|number:1}} 場緊急夜場
-                </div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">升級</label>
-                <div class="col-sm-9">
-                    <input class="form-check-input" type="checkbox" ng-model="cleanAP">清AP升級<br>
-                    <div ng-show="cleanAP">
-                        隨時間回復AP: {{AP_time|number:0}}<br>
-                        <span ng-hide="isDetail()">吃下把全部{{get_bread + own_bread}}個面包</span>
-                        <span ng-show="isDetail()">能吃下<input ng-model="breadAte" type="number"/>個面包(共有{{get_bread + own_bread}}個)</span>
-                        <br> 面包回復AP: {{AP_bread}}<br> 升{{levelUp|number:0}}級，得到{{levelUp*10|number:0}}lp
-                        <br>
+                <div class="row justify-content-center">
+                    <div class="col-md-4 col-xs-12 text-center">
+                        <div aria-label="設定" class="btn-group" role="group">
+                            <button class="btn btn-default" ng-click="prepare()" ng-disabled="isPrepare()" type="button">
+                                預算
+                            </button>
+                            <button class="btn btn-default" ng-click="simplify()" ng-disabled="isSimplify()" type="button">
+                                簡化版
+                            </button>
+                            <button class="btn btn-default" ng-click="detail()" ng-disabled="isDetail()" type="button">
+                                詳細
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">演唱會升級</label>
-                <div class="col-sm-9">
-                    <span ng-hide="isPrepare()"><input class="form-check-input" type="checkbox" ng-model="isFullLevel">滿級<br></span>
-                    <span ng-hide="isFullLevel">需要<input type="number" ng-model="upgrade_consum_lp">lp</span>
-                    <div ng-hide="isFullLevel" class="alert alert-info" role="alert" id="upgrade-hint" style="max-width:325px">
-                        每多刷一個滿級特大，浪費15~20LP。
+                <form id="form-horizontal" name="form" ng-keyup="update()">
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                pt設定
+                            </h4>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">LP</label>
-                <div class="col-sm-9">
-                    合共需要{{LP_consum|number:1}} LP<br> 道具回復{{LP_prop}} LP<br>
-                    <input class="form-check-input" type="checkbox" ng-model="notSleep">夜間無縫<br>
-                    <div ng-hide="notSleep">
-                        每天睡覺
-                        <span ng-hide="isDetail()">8</span>
-                        <input ng-show="isDetail()" type="number" ng-model="sleepingHours" step="0.5" /> 小時
-                        <br>
+                    <div class="row justify-content-center">
+                        <div class="col-md-3 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="targetPt" name="targetPt" ng-change="targetPtToPt5()" ng-model="targetPt" type="number" value=""/>
+                                <label for="targetPt">
+                                    目標Pt
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-xs-12 text-center" style="margin-top: 25px;">
+                            － 或 －
+                        </div>
+                        <div class="col-md-3 col-xs-12">
+                            <div class=" md-form">
+                                <input class="form-control" id="numberOfPt5" name="numberOfPt5" ng-change="Pt5TotargerPt()" ng-model="numberOfPt5" type="number" value="0"/>
+                                <label for="targetPt">
+                                    積五卡數目
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    時間回復{{LP_time|number:1}} LP<br> 額外需要買 {{LP_need|number:1}} LP
-                </div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">特價乳酸</label>
-                <div class="col-sm-9">
-                    5折乳酸 {{buy_lactate_50}} 瓶<br> 8折乳酸 {{buy_lactate_80}} 瓶<br> 合共使用了 {{tot_diamond_lactate}} 鑽石買乳酸
-                </div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">直接購買LP</label>
-                <div class="col-sm-9">
-                    還欠 {{lp_buy_directly}} LP<br> 需要 {{tot_diamond_lp}} 鑽
-                </div>
-            </div>
-
-            <div class="form-group col-sm-12">
-                <label class="col-sm-3 control-label">合計</label>
-                <div class="col-sm-9">
-                    需要使用 {{tot_diamond_lactate + tot_diamond_lp}} 鑽石
-                </div>
-            </div>
-            <div class="form-group">
-                <button id="submit" class="btn btn-primary pull-right" ng-click="update()">更新</button>
-                <button id="default" class="btn btn-primary pull-right" ng-click="defaultSetting()">預設</button>
-                <!--<button id="submit" class="btn btn-primary pull-right" ng-click="flatBrush()">平刷</button>
+                    <div class="row justify-content-center" ng-show="isSimplify()">
+                        <div class="col-md-6 col-xs-10">
+                            <div class=" md-form">
+                                <input class="form-control datepicker" id="deadlineDate" name="deadlineDate" ng-model="deadlineDate" placeholder="選擇日期" type="text"/>
+                                <label for="deadlineDate">
+                                    活動結束日
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-xs-2" style="margin-top: 25px;">
+                            22:00
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-3">
+                            <div class="md-form">
+                                <input class="form-control datepicker" id="deadlineDate" name="deadlineDate" ng-model="deadlineDate" placeholder="選擇日期" type="text"/>
+                                <label for="deadlineDate">
+                                    結束日期
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3 offset-md-1">
+                            <div class="md-form">
+                                <input class="form-control timepicker" id="deadlineTime" ng-model="deadlineTime" placeholder="選擇時間" type="text">
+                                    <label for="deadlineTime">
+                                        結束時間
+                                    </label>
+                                </input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isSimplify()">
+                        <div class="col-md-7">
+                            <span ng-show="showDate()">
+                                {{remainingTime-1000*60*60*24|date:'d日 H小時mm分鐘':'UTC'}}
+                            </span>
+                            <span ng-hide="showDate()||passdeadline()">
+                                {{remainingTime-1000*60*60*24|date:'H小時mm分鐘':'UTC'}}
+                            </span>
+                            <span ng-show="passdeadline()">
+                                <div class="alert alert-danger" role="alert">
+                                    活動已結束。
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4" ng-show="isPrepare()">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                活動時長
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isPrepare()">
+                        <div class="col-md-3 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="days" name="days" ng-model="days" type="number"/>
+                                <label for="days">
+                                    日數
+                                </label>
+                            </div>
+                        </div>
+                        <div class="offset-md-1 col-md-3 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="hours" name="hours" ng-model="hours" type="number"/>
+                                <label for="hours">
+                                    時數(小時）
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-7 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="multiple" name="multiple" ng-model="multiple" type="number"/>
+                                <label for="multiple">
+                                    倍數加乘(%)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4" ng-show="isDetail()">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                擁有道具
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-2 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="own_lactate" name="own_lactate" ng-model="own_lactate" type="number"/>
+                                <label for="own_lactate">
+                                    擁有乳酸/糖果的總數
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="own_drink" name="own_drink" ng-model="own_drink" type="number"/>
+                                <label for="own_drink">
+                                    擁有運動飲料/檸檬蜜餞的總數
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-12">
+                            <div class="md-form">
+                                <input class="form-control" id="own_bread" name="own_bread" ng-model="own_bread" type="number"/>
+                                <label for="own_bread">
+                                    擁有麵包/便當的總數
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                積分獎勵道具
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">
+                            {{get_lactate}} 瓶乳酸
+                        </div>
+                        <div class="col-md-3">
+                            {{get_drink}} 瓶運動飲料
+                        </div>
+                        <div class="col-md-2">
+                            {{get_bread}} 個面包
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-6 col-xs-10">
+                            <div class="md-form">
+                                <input class="form-control" id="maxPt" name="maxPt" ng-model="maxPt" type="number"/>
+                                <label for="maxPt">
+                                    循環一輪需Pt
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-xs-2">
+                            <button class="btn-floating cyan" ng-click="showRewards=true" ng-hide="showRewards">
+                                <i class="fas fa-chevron-down">
+                                </i>
+                            </button>
+                            <button class="btn-floating cyan" ng-click="showRewards=false" ng-show="showRewards">
+                                <i class="fas fa-chevron-up">
+                                </i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-7 col-xs-12">
+                            <table class="table px-3 py-3" ng-show="showRewards">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            分數
+                                        </th>
+                                        <th>
+                                            數量
+                                        </th>
+                                        <th>
+                                            類別
+                                        </th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="reward in rewards track by $index">
+                                    <tr>
+                                        <td>
+                                            <input class="form-control" ng-model="reward.point" type="number"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-model="reward.amount" type="number"/>
+                                        </td>
+                                        <td>
+                                            <select class="mdb-select" ng-model="reward.type" ng-options="option for option in typeOfRewards">
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a ng-click="insertReward($index)">
+                                                <i class="fas fa-plus">
+                                                </i>
+                                            </a>
+                                            <a ng-click="removeReward($index)">
+                                                <i class="fas fa-minus">
+                                                </i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4" ng-show="isDetail()">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                現時帳戶狀況
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-2">
+                            <div class="md-form">
+                                <input class="form-control" id="current_lp" name="current_lp" ng-model="current_lp" type="number"/>
+                                <label for="current_lp">
+                                    現有LP
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="md-form">
+                                <input class="form-control" id="current_ap" name="current_ap" ng-model="current_ap" type="number"/>
+                                <label for="current_ap">
+                                    現有AP
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="md-form">
+                                <input class="form-control" id="current_exp" name="current_exp" ng-model="current_exp" type="number"/>
+                                <label for="current_exp">
+                                    現時EXP
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7 col-xs-12">
+                            <h4>
+                                現時卡組使用LP
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">
+                            <div class="md-form">
+                                <input class="form-control" id="large_lp" name="large_lp" ng-model="large_lp" step="0.25" type="number"/>
+                                <label for="large_lp">
+                                    前特大(6000pt/場)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="md-form">
+                                <input class="form-control" id="larger_lp" name="larger_lp" ng-model="larger_lp" step="0.25" type="number"/>
+                                <label for="larger_lp">
+                                    後特大(9000pt/場)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="md-form">
+                                <input class="form-control" id="urgent_lp" name="urgent_lp" ng-model="urgent_lp" step="0.25" type="number"/>
+                                <label for="urgent_lp">
+                                    緊急場(15000pt/場)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            緊急出現率(特大:緊急):
+                            <span ng-hide="isDetail()">
+                                {{ratio_urgent}}
+                            </span>
+                            <span ng-show="isDetail()">
+                                <input class="form-control" ng-model="ratio_urgent" step="0.5" type="number"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" ng-show="isDetail()">
+                        <div class="col-md-7">
+                            <span ng-hide="isDetail()">
+                                {{night|number:1}} 場緊急夜場
+                            </span>
+                            <div class="alert alert-info" ng-hide="isDetail()" ng-show="showNightWarning()" role="alert">
+                                每天至少開{{night|number:1}}場免費緊急夜場。請合理分配刷演唱會的時間。
+                            </div>
+                            <div class="md-form" ng-show="isDetail()">
+                                <input class="form-control" id="night" max="7" min="0" name="night" ng-model="night" type="number"/>
+                                <label for="night">
+                                    場緊急夜場(0~{{max_night|number:0}}之間)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7" ng-hide="isConcertLPFilled()">
+                            <div class="alert alert-warning" role="alert">
+                                不知道卡組數值? 可以使用
+                                <a id="showCardsclick" ng-click="showCardsCalculator()">
+                                    卡組數值計算器
+                                </a>
+                                。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <h4>
+                                爆擊設定
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            爆擊機率（％）:
+                            <span ng-hide="isDetail()">
+                                {{crit_rate|number:0}}
+                            </span>
+                            <input class="form-control" ng-model="crit_rate" ng-show="isDetail()" type="number"/>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            爆擊提升率（％）: 20
+                        </div>
+                    </div>
+                    <div ng-show="isConcertLPFilled()">
+                        <div class="row justify-content-center">
+                            <div class="col-md-7">
+                                <h4>
+                                    每LP收益
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-7">
+                                <div ng-hide="isLargerBetter()">
+                                    收益: {{PtperLP|number:1}} pt/lp
+                                    <div class="alert alert-info" ng-show="isLargeNightBetter()" role="alert">
+                                        <strong>
+                                            前特大
+                                        </strong>
+                                        收益高於或等於後特大，只刷前特大。
+                                    </div>
+                                </div>
+                                <div ng-show="isLargerBetter()">
+                                    前半場收益: {{PtperLP|number:1}} pt/lp
+                                
+                                    後半場收益: {{PtperLP_larger|number:1}} pt/lp
+                                    <div class="alert alert-info" ng-show="isLargeNightBetter()" role="alert">
+                                        <strong>
+                                            後特大
+                                        </strong>
+                                        收益高於前特大，而前特大+緊急夜場的收益高於後特大無夜場的收益，所以前半場刷出緊急夜場即停，以最大化收益。
+                                    </div>
+                                    <div class="alert alert-info" ng-hide="isLargeNightBetter()" role="alert">
+                                        <strong>
+                                            後特大
+                                        </strong>
+                                        收益高於前特大，前半場只清自動回覆AP，留道具刷後特大，以最大化收益。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7" ng-hide="isConcertLPFilled()">
+                            <div class="alert alert-info">
+                                請先填寫演唱會所需LP
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="form-group col-md-7">
+                            <label>
+                                需要演唱會
+                            </label>
+                            <div ng-hide="isLargerBetter()">
+                                {{large_need|number:1}}場前特大 + {{urgent_need|number:1}}場緊急
+                                <br/>
+                                當中有 {{night_open|number:1}} 場緊急夜場
+                            </div>
+                            <div ng-show="isLargerBetter()">
+                                {{large_need|number:1}}場前特大 + {{larger_need|number:1}}場後特大 + {{urgent_need|number:1}}場緊急
+                                <br/>
+                                當中有 {{night_open|number:1}} 場緊急夜場
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                升級
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <input class="form-check-input" ng-model="cleanAP" type="checkbox"/>
+                            清AP升級
+                            <br/>
+                            <div ng-show="cleanAP">
+                                隨時間回復AP: {{AP_time|number:0}}
+                                <br/>
+                                <span ng-hide="isDetail()">
+                                    吃下把全部{{get_bread + own_bread}}個面包
+                                </span>
+                                <span ng-show="isDetail()">
+                                    能吃下
+                                    <input ng-model="breadAte" type="number"/>
+                                    個面包(共有{{get_bread + own_bread}}個)
+                                </span>
+                                <br/>
+                                面包回復AP: {{AP_bread}}
+                                <br/>
+                                升{{levelUp|number:0}}級，得到{{levelUp*10|number:0}}lp
+                                <br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                演唱會升級
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <span ng-hide="isPrepare()">
+                                <input class="form-check-input" ng-model="isFullLevel" type="checkbox"/>
+                                滿級
+                                <br/>
+                            </span>
+                            <span ng-hide="isFullLevel">
+                                需要lp
+                                <input class="form-control" ng-model="upgrade_consum_lp" type="number"/>
+                            </span>
+                            <div class="alert alert-info" id="upgrade-hint" ng-hide="isFullLevel" role="alert">
+                                每多刷一個滿級特大，浪費15~20LP。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                LP總計
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class=" col-sm-7 form-check">
+                            合共需要{{LP_consum|number:1}} LP
+                            <br/>
+                            道具回復{{LP_prop}} LP
+                            <br/>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                LP回復
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <input class="form-check-input" id="notSleep" name="notSleep" ng-model="notSleep" type="checkbox"/>
+                            <label class="form-check-label" for="notSleep">
+                                夜間無縫
+                            </label>
+                            <br/>
+                            <div ng-hide="notSleep">
+                                每天睡覺
+                                <span ng-hide="isDetail()">
+                                    8
+                                </span>
+                                <input ng-model="sleepingHours" ng-show="isDetail()" step="0.5" type="number"/>
+                                小時
+                                <br/>
+                            </div>
+                            時間回復{{LP_time|number:1}} LP
+                            <br/>
+                            額外需要買 {{LP_need|number:1}} LP
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                特價乳酸
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class=" col-md-7">
+                            5折乳酸 {{buy_lactate_50}} 瓶
+                            <br/>
+                            8折乳酸 {{buy_lactate_80}} 瓶
+                            <br/>
+                            合共使用了 {{tot_diamond_lactate}} 鑽石買乳酸
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-7">
+                            <h4>
+                                直接購買LP
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            還欠 {{lp_buy_directly}} LP
+                            <br/>
+                            需要 {{tot_diamond_lp}} 鑽
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <label>
+                                合計
+                            </label>
+                            需要使用 {{tot_diamond_lactate + tot_diamond_lp}} 鑽石
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-7 text-center">
+                            <div class="form-group">
+                                <button class="btn cyan " id="submit" ng-click="update()">
+                                    更新
+                                </button>
+                                <button class="btn pink " id="default" ng-click="defaultSetting()">
+                                    預設
+                                </button>
+                                <!--<button id="submit" class="btn btn-primary pull-right" ng-click="flatBrush()">平刷</button>
                 <button id="submit" class="btn btn-primary pull-right" ng-click="flatBrush_()">乳酸平刷</button>-->
-            </div>
-        </form>
-    </div>
-    <div id="cards" class="container col-md-12 col-sm-12"></div>
-    <div class="container col-md-12 col-sm-12" ng-show="showCards">
-        <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
-        <h2>卡組數值計算器</h2><br>
-        <div class="container col-md-1 col-sm-0"></div>
-        <div class="container col-md-12 col-sm-12">
-            <div class="container col-md-4 col-sm-12" style="background-color: palevioletred">
-                Da
-                <br>第一隊: <input type="number" ng-model="Da_team1" ng-change="countLP('Da')">
-                <br> 第二隊: <input type="number" ng-model="Da_team2" ng-change="countLP('Da')">
-                <br> 第三隊: <input type="number" ng-model="Da_team3" ng-change="countLP('Da')">
-                <br>{{Da_lp_50W}}lp/前特大
-                <br>{{Da_lp_75W}}lp/後特大
-                <br>{{Da_lp_100W}}lp/緊急
-            </div>
-            <div class="container col-md-4 col-sm-12" style="background-color: lightblue">
-                Vo
-                <br> 第一隊: <input type="number" ng-model="Vo_team1" ng-change="countLP('Vo')">
-                <br> 第二隊: <input type="number" ng-model="Vo_team2" ng-change="countLP('Vo')">
-                <br> 第三隊: <input type="number" ng-model="Vo_team3" ng-change="countLP('Vo')">
-                <br>{{Vo_lp_50W}}lp/前特大
-                <br>{{Vo_lp_75W}}lp/後特大
-                <br>{{Vo_lp_100W}}lp/緊急
-            </div>
-            <div class="container col-md-4 col-sm-12" style="background-color: lightyellow">
-                Pf
-                <br>第一隊: <input type="number" ng-model="Pf_team1" ng-change="countLP('Pf')">
-                <br> 第二隊: <input type="number" ng-model="Pf_team2" ng-change="countLP('Pf')">
-                <br> 第三隊: <input type="number" ng-model="Pf_team3" ng-change="countLP('Pf')">
-                <br>{{Pf_lp_50W}}lp/前特大
-                <br>{{Pf_lp_75W}}lp/後特大
-                <br>{{Pf_lp_100W}}lp/緊急
-            </div>
-        </div>
-        <div class="container col-md-12 col-sm-12">
-            <center>
-                今期緊急及後特大:
-                <select ng-model="currentUrgentColor" style="width:100%" ng-change="countLP('')">
-                    <option value="Da">Da</option> 
-                    <option value="Vo">Vo</option> <!-- interpolation -->
-                    <option value="Pf">Pf</option>
-                </select>
-                <br> 卡組: {{lp_50W}}-{{lp_75W}}-{{lp_100W}}
-                <br>
-                <button class="btn btn-default" ng-click="hideCardsCalculator()">關閉</button>
-                <br>
-            </center>
-        </div>
-        <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
-    </div>
-
-    <div class="container col-md-12 col-sm-12" id="error">
-        <div class="container col-md-2 col-sm-0"> </div>
-        <div class="container col-md-8 col-sm-12">
-            <div class="panel-group">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#collapse1">誤差</a>
-                        </h4>
-                    </div>
-                    <div id="collapse1" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            雖然已經盡量考慮各種情況，但由於部份稀有的情況處理起來太麻煩，仍存在以下誤差。
-                            <br>1. 緊急夜場最大數目以前特大的數據計算。如果後特大收益高於前特大，緊急夜場數目大於實際所需。
-                            <br>2. 詳細版中，緊急夜場是截尾整數。
-                            <br>3. 假設活動第一天已經能緊急夜場。
-                            <br>4. 後特大收益高於前特大的情況下，只計算時間自動回覆的LP，忽略前半場升級帶來的LP。
-                            <br>5. 默認緊急收益不低於特大，夜場全給緊急。如果特大收益高於緊急，仍會浪費LP開全部緊急。
-                            <br>6. 不能選擇收益低的行動，如無限夜場、特大夜場、後特大收益高卻刷前特大。
-                            <br>7. 不計算課程特訓的pt。
-                            <br>8. 升級時LP浪費(e.g.剩餘10分鐘回復)不列入計算。
+                            </div>
                         </div>
+                    </div>
+                </form>
+                <!---------------------------------- card cal-------------------------------------------->
+                <div id="showCards" ng-show="showCards">
+                    <div class="row justify-content-center">
+                        <div class="col-md-7 ">
+                            <h4>
+                                卡組數值計算器
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class=" col-md-3 px-2 py-2 red lighten-2">
+                            Da值（紅卡）
+                            <br/>
+                            第一隊:
+                            <input class="form-control" ng-change="countLP('Da')" ng-model="Da_team1" type="number"/>
+                            <br/>
+                            第二隊:
+                            <input class="form-control" ng-change="countLP('Da')" ng-model="Da_team2" type="number"/>
+                            <br/>
+                            第三隊:
+                            <input class="form-control" ng-change="countLP('Da')" ng-model="Da_team3" type="number"/>
+                            <br/>
+                            {{Da_lp_50W}}lp/前特大
+                            <br/>
+                            {{Da_lp_75W}}lp/後特大
+                            <br/>
+                            {{Da_lp_100W}}lp/緊急
+                        </div>
+                        <div class=" col-md-3 px-2 py-2 blue lighten-2">
+                            Vo值（藍卡）
+                            <br/>
+                            第一隊:
+                            <input class="form-control" ng-change="countLP('Vo')" ng-model="Vo_team1" type="number"/>
+                            <br/>
+                            第二隊:
+                            <input class="form-control" ng-change="countLP('Vo')" ng-model="Vo_team2" type="number"/>
+                            <br/>
+                            第三隊:
+                            <input class="form-control" ng-change="countLP('Vo')" ng-model="Vo_team3" type="number"/>
+                            <br/>
+                            {{Vo_lp_50W}}lp/前特大
+                            <br/>
+                            {{Vo_lp_75W}}lp/後特大
+                            <br/>
+                            {{Vo_lp_100W}}lp/緊急
+                        </div>
+                        <div class=" col-md-3 px-2 py-2 yellow accent-1">
+                            Pf值（黃卡）
+                            <br/>
+                            第一隊:
+                            <input class="form-control" ng-change="countLP('Pf')" ng-model="Pf_team1" type="number"/>
+                            <br/>
+                            第二隊:
+                            <input class="form-control" ng-change="countLP('Pf')" ng-model="Pf_team2" type="number"/>
+                            <br/>
+                            第三隊:
+                            <input class="form-control" ng-change="countLP('Pf')" ng-model="Pf_team3" type="number"/>
+                            <br/>
+                            {{Pf_lp_50W}}lp/前特大
+                            <br/>
+                            {{Pf_lp_75W}}lp/後特大
+                            <br/>
+                            {{Pf_lp_100W}}lp/緊急
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-4 text-center">
+                            今期緊急及後特大:
+                            <select class="mdb-select" ng-change="countLP('')" ng-model="currentUrgentColor" style="width:100%">
+                                <option value="Da">
+                                    Da
+                                </option>
+                                <option value="Vo">
+                                    Vo
+                                </option>
+                                <!-- interpolation -->
+                                <option value="Pf">
+                                    Pf
+                                </option>
+                            </select>
+                            <br>
+                                卡組: {{lp_50W}}-{{lp_75W}}-{{lp_100W}}
+                                <br>
+                                    <button class="btn pink" ng-click="hideCardsCalculator()">
+                                        關閉
+                                    </button>
+                                    <br>
+                                    </br>
+                                </br>
+                            </br>
+                        </div>
+                    </div>
+                </div>
+                <!------------------------------       error     ------------------------------------>
+                <div class="row justify-content-center" id="error">
+                    <div class="col-md-7">
+                        <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    
+                                        關於誤差
+                                
+                                </h4>
+                            </div>
+                            <div class="panel-collapse " >
+                                <div class="panel-body">
+                                    雖然已經盡量考慮各種情況，但由於部份稀有的情況處理起來太麻煩，仍存在以下誤差。
+                                    <br/>
+                                    <ol>
+                                        <li>緊急夜場最大數目以前特大的數據計算。如果後特大收益高於前特大，緊急夜場數目大於實際所需。</li>
+                                        <li>詳細版中，緊急夜場是截尾整數。</li>
+                                        <li>假設活動第一天已經能緊急夜場。</li>
+                                        <li>後特大收益高於前特大的情況下，只計算時間自動回覆的LP，忽略前半場升級帶來的LP。</li>
+                                        <li>默認緊急收益不低於特大，夜場全給緊急。如果特大收益高於緊急，仍會浪費LP開全部緊急。</li>
+                                        <li>不能選擇收益低的行動，如無限夜場、特大夜場、後特大收益高卻刷前特大。</li>
+                                        <li>不計算課程特訓的pt。</li>
+                                        <li>升級時LP浪費(e.g.剩餘10分鐘回復)不列入計算。</li>
+                                    </ol>
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-
-    <!-- FOOTER -->
-    <hr>
-    <footer class="col-md-12 col-sm-12">
-        <p class="pull-right">
-            <a style="cursor: pointer" ng-click="scrollToTop()">Back to top</a>
-        </p>
-        <p>&copy; 2016 &nbsp;<i>vivianhtlee</i></p>
-        <p>Powered by <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://glyphicons.com/" target="_blank">Glyphicons</a></p>
-    </footer>
-    </div>
-    <!-- /.container -->
-
-    <!-- Angular and Angular-route libraries (v1.5.7) -->
-    <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script-->
-    <script src="lib/angular.min.js"></script>
-    <script src="lib/angular-route.min.js"></script>
-
-    <!-- JavaScript of this page -->
-    <script src="js/es.js"></script>
-
-</body>
-
+        <footer class="col-md-12 col-sm-12">
+                    <p class="pull-right">
+                        <a ng-click="scrollToTop()" style="cursor: pointer">
+                            Back to top
+                        </a>
+                    </p>
+                    <p>
+                        © 2016
+                        <i>
+                            vivianhtlee
+                        </i>
+                    </p>
+                    <p>
+                        Powered by
+                        <a href="https://mdbootstrap.com" target="_blank">
+                            mdbootstrap
+                        </a>
+                        and
+                        
+                    </p>
+                </footer>
+    </body>
 </html>
+<!-- /.container -->
+<!-- Angular and Angular-route libraries (v1.5.7) -->
+<!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script-->
+<script src="lib/angular.min.js">
+</script>
+<script src="lib/angular-route.min.js">
+</script>
+<!-- JavaScript of this page -->
+<script src="js/es.js">
+</script>
+<!-- Bootstrap core JavaScript -->
+<script src="js/bootstrap.min.js" type="text/javascript">
+</script>
+<!-- MDB core JavaScript -->
+<script src="js/mdb.min.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    $('.datepicker').pickadate();
+    // Time Picker Initialization
+$('#deadlineTime').pickatime({});
+$(document).ready(function() {
+   $('.mdb-select').material_select();
+ });
+
+$('#showCardsclick').click(function(){
+ $('html,body').animate({ scrollTop: 9999 }, '1000');
+});
+</script>
