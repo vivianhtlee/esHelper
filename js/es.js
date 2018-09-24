@@ -168,11 +168,11 @@ angular
         }
 
         $scope.Pt5TotargerPt = function() {
-            $scope.targetPt = $scope.numberOfPt5 * 725000;
+            $scope.targetPt = $scope.numberOfPt5 * 800000;
         }
 
         $scope.targetPtToPt5 = function() {
-            $scope.numberOfPt5 = parseInt($scope.targetPt / 725000);
+            $scope.numberOfPt5 = parseInt($scope.targetPt / 800000);
             console.log("targetPtToPt5");
         }
 
@@ -483,7 +483,7 @@ angular
             console.log("test jump tp cards");
             $scope.showCards = true;
             window.location.href = "#cards";
-            
+
         }
         $scope.hideCardsCalculator = function() {
             $scope.showCards = false;
