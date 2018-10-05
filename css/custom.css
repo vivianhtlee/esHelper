@@ -1,11 +1,19 @@
+
+@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+* {
+    font-family: 'Noto Sans TC';
+}
+
+body{
+background: #00add1;
+}
+
 .table>tbody>tr>td {
     vertical-align: middle;
 }
 
 .table {
     vertical-align: middle;
-    border: 3px solid lightblue;
-    border-radius: 3px;
 }
 
 .label {
@@ -26,7 +34,7 @@
     background-color: #ffa;
 }
 
-input[type=number],
+/*input[type=number],
 input[type=date],
 input[type=time],
 input[type=precentage] select {
@@ -38,6 +46,10 @@ input[type=precentage] select {
     border: 1px solid #ccc;
     border-radius: 2px;
     box-sizing: border-box;
+}*/
+
+h4{
+    color: #00add1;
 }
 
 select {
